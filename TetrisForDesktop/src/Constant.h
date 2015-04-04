@@ -1,0 +1,32 @@
+#ifndef _CONSTANT_H
+#define _CONSTANT_H
+
+enum Boolean{
+	False, True
+};
+
+enum Direction{
+	UP, RIGHT, DOWN, LEFT
+};
+
+enum ProcessType{
+	DIRECTION, DIRECT_DOWN, AUTO
+};
+
+enum KeyCode{
+	UP_KEY_CODE = 72, LEFT_KEY_CODE = 75, 
+	RIGHT_KEY_CODE = 77, DOWN_KEY_CODE = 80, 
+	SPACE_BAR_KEY_CODE = 32
+};
+
+enum BoardType{
+	EMPTY,
+	MOVING_BLOCK, FIXED_BLOCK,
+	LEFT_WALL, RIGHT_WALL, BOTTOM_WALL, TOP_WALL,
+	LEFT_TOP_EDGE, RIGHT_TOP_EDGE, LEFT_BOTTOM_EDGE, RIGHT_BOTTOM_EDGE
+};
+
+#define MAX_SPEED_LEVEL 10
+#define MIN_SPEED_LEVEL 1
+
+#endif

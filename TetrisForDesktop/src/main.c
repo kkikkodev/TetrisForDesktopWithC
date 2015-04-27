@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <conio.h>
+#include <windows.h>
+#include <time.h>
 #include "Constant.h"
 #include "TetrisView.h"
 
@@ -8,36 +10,47 @@ int main(int argc, char* argv[]){
 	TetrisView_StartGame(&tetrisView);
 	int processType;
 	int direction;
+	DWORD tickCount;
 	while (True){
 		processType = AUTO;
 		direction = DOWN;
-		if (_kbhit()){
-			int key = _getch();
-			if (_kbhit()){
-				key = _getch();
-				switch (key){
-				case UP_KEY_CODE:
-					processType = DIRECTION;
-					direction = UP;
-					break;
-				case LEFT_KEY_CODE:
-					processType = DIRECTION;
-					direction = LEFT;
-					break;
-				case RIGHT_KEY_CODE:
-					processType = DIRECTION;
-					direction = RIGHT;
-					break;
-				case DOWN_KEY_CODE:
-					processType = DIRECTION;
-					direction = DOWN;
-					break;
-				}
+		tickCount = GetTickCount();
+		while (True){
+			if (GetTickCount() - tickCount > TetrisView_GetDownMilliSecond(&tetrisView)){
+				processType = AUTO;
+				direction = DOWN;
+				break;
 			}
-			else{
-				switch (key){
-				case SPACE_BAR_KEY_CODE:
-					processType = DIRECT_DOWN;
+			if (_kbhit()){
+				int key = _getch();
+				if (_kbhit()){
+					key = _getch();
+					if (key == UP_KEY_CODE){
+						processType = DIRECTION;
+						direction = UP;
+						break;
+					}
+					else if (key == DOWN_KEY_CODE){
+						processType = DIRECTION;
+						direction = DOWN;
+						break;
+					}
+					else if (key == LEFT_KEY_CODE){
+						processType = DIRECTION;
+						direction = LEFT;
+						break;
+					}
+					else if (key == RIGHT_KEY_CODE){
+						processType = DIRECTION;
+						direction = RIGHT;
+						break;
+					}
+				}
+				else{
+					if (key == SPACE_BAR_KEY_CODE){
+						processType = DIRECT_DOWN;
+						break;
+					}
 				}
 			}
 		}

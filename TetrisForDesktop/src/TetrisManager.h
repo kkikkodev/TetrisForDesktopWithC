@@ -27,5 +27,6 @@ int TetrisManager_IsReachedToBottom(TetrisManager* tetrisManager);
 int TetrisManager_ProcessReachedCase(TetrisManager* tetrisManager);
 void TetrisManager_Sleep(TetrisManager* tetrisManager);
 void TetrisManager_Print(TetrisManager* tetrisManager);
+DWORD TetrisManager_GetDownMilliSecond(TetrisManager* tetrisManager);
 
 #endif

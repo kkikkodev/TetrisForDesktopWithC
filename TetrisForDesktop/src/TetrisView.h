@@ -10,5 +10,6 @@ typedef struct _tetrisView{
 void TetrisView_StartGame(TetrisView* tetrisView);
 void TetrisView_ProcessGame(TetrisView* tetrisView, int processType, int direction);
 void TetrisView_EndGame(TetrisView* tetrisView);
+DWORD TetrisView_GetDownMilliSecond(TetrisView* tetrisView); //make temporarily for calling from main function
 
 #endif

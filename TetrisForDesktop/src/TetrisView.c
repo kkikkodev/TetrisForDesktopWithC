@@ -43,9 +43,6 @@ void TetrisView_ProcessGame(TetrisView* tetrisView, int processType, int directi
 	}
 	TetrisManager_ProcessDeletingLines(&tetrisView->tetrisManager);
 	TetrisManager_Print(&tetrisView->tetrisManager);
-	if (processType == AUTO){
-		TetrisManager_Sleep(&tetrisView->tetrisManager);
-	}
 }
 
 void TetrisView_EndGame(TetrisView* tetrisView){
@@ -56,4 +53,8 @@ void TetrisView_EndGame(TetrisView* tetrisView){
 		tetrisView->tetrisManager.deletedLineCount);
 	system("pause");
 	exit(-1);
+}
+
+DWORD TetrisView_GetDownMilliSecond(TetrisView* tetrisView){
+	return TetrisManager_GetDownMilliSecond(&tetrisView->tetrisManager);
 }

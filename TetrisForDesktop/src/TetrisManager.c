@@ -47,6 +47,10 @@ void TetrisManager_ChangeBoardByDirection(TetrisManager* tetrisManager, int dire
 	int checkResult = TetrisManager_CheckValidPosition(tetrisManager, direction);
 	if (checkResult == EMPTY){
 		tetrisManager->block = Block_Move(tetrisManager->block, direction);
+		if (direction == UP){
+			TetrisManager_Sleep(tetrisManager);
+			tetrisManager->block = Block_Move(tetrisManager->block, DOWN);
+		}
 	}
 	else{
 		if (direction == UP){
@@ -71,7 +75,7 @@ void TetrisManager_ChangeBoardByDirection(TetrisManager* tetrisManager, int dire
 		}
 		else{
 			if (direction == RIGHT && checkResult == RIGHT_WALL ||
-				direction == LEFT && checkResult == LEFT_WALL || 
+				direction == LEFT && checkResult == LEFT_WALL ||
 				direction == RIGHT && checkResult == FIXED_BLOCK ||
 				direction == LEFT && checkResult == FIXED_BLOCK){
 				TetrisManager_Sleep(tetrisManager);
@@ -129,17 +133,7 @@ int TetrisManager_ProcessReachedCase(TetrisManager* tetrisManager){
 }
 
 void TetrisManager_Sleep(TetrisManager* tetrisManager){
-	int i;
-	DWORD milliSecond = INITAL_SPEED;
-	for (i = MIN_SPEED_LEVEL; i < tetrisManager->speedLevel; i++){
-		if (i < MAX_SPEED_LEVEL / 2){
-			milliSecond -= SPEED_LEVEL_OFFSET;
-		}
-		else{
-			milliSecond -= (SPEED_LEVEL_OFFSET / 5);
-		}
-	}
-	TimeUtil_Sleep(milliSecond);
+	TimeUtil_Sleep(TetrisManager_GetDownMilliSecond(tetrisManager));
 }
 
 void TetrisManager_Print(TetrisManager* tetrisManager){
@@ -190,6 +184,20 @@ void TetrisManager_Print(TetrisManager* tetrisManager){
 	printf("Deleted lines : %d lines", tetrisManager->deletedLineCount);
 	Block_PrintNext(tetrisManager->block, STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 4);
 	CursorUtil_Hide();
+}
+
+DWORD TetrisManager_GetDownMilliSecond(TetrisManager* tetrisManager){
+	int i;
+	DWORD milliSecond = INITAL_SPEED;
+	for (i = MIN_SPEED_LEVEL; i < tetrisManager->speedLevel; i++){
+		if (i < MAX_SPEED_LEVEL / 2){
+			milliSecond -= SPEED_LEVEL_OFFSET;
+		}
+		else{
+			milliSecond -= (SPEED_LEVEL_OFFSET / 5);
+		}
+	}
+	return milliSecond;
 }
 
 static void _TetrisManager_ClearBoard(TetrisManager* tetrisManager){

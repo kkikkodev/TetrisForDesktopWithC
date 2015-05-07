@@ -9,7 +9,7 @@
 #define SPEED_LEVEL_OFFSET 50
 #define LEVELP_UP_CONDITION 3
 #define STATUS_POSITION_X_TO_PRINT 40
-#define STATUS_POSITION_Y_TO_PRINT 6
+#define STATUS_POSITION_Y_TO_PRINT 3
 
 static void _TetrisManager_ClearBoard(TetrisManager* tetrisManager);
 static void _TetrisManager_ChangeBoardByStatus(TetrisManager* tetrisManager, int status);
@@ -181,12 +181,22 @@ void TetrisManager_Print(TetrisManager* tetrisManager){
 		printf("\n");
 	}
 	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT);
-	printf("***** Tetris *****\n");
+	printf("********* Tetris *********\n");
 	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 1);
-	printf("Current speed level : %d level\n", tetrisManager->speedLevel);
-	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 2);
-	printf("Deleted lines : %d lines", tetrisManager->deletedLineCount);
-	Block_PrintNext(tetrisManager->block, STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 4);
+	printf("[%d level / %d lines deleted]\n", tetrisManager->speedLevel, tetrisManager->deletedLineCount);
+	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 3);
+	printf("[Key Description]\n");
+	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 4);
+	printf("ก็ : move left\n");
+	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 5);
+	printf("กๆ : move right\n");
+	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 6);
+	printf("ก้ : move down\n");
+	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 7);
+	printf("ก่ : rotate\n");
+	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 8);
+	printf("SpaceBar : direct down\n");
+	Block_PrintNext(tetrisManager->block, STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 11);
 	CursorUtil_Hide();
 }
 

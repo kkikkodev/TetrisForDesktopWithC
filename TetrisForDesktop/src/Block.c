@@ -111,7 +111,7 @@ Point* Block_GetPositions(Block block){
 
 void Block_PrintNext(Block block, int x, int y){
 	CursorUtil_GotoXY(x, y);
-	printf("Next block : ");
+	printf("[Next block]\n");
 	x += 3;
 	y += 2;
 	CursorUtil_GotoXY(x, y++);

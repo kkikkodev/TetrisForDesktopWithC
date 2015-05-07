@@ -13,6 +13,7 @@ typedef struct _block{
 	int current;
 	int next;
 	int direction;
+	int color;
 }Block;
 
 Block Block_Make(int isFirst, Block block);

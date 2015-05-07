@@ -23,3 +23,7 @@ void TimeUtil_Sleep(DWORD milliSecond){
 		}
 	}
 }
+
+void FontUtil_ChangeFontColor(int color){
+	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+}

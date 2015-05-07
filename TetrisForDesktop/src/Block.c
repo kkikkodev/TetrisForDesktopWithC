@@ -5,15 +5,15 @@
 #include "Util.h"
 #include "Constant.h"
 
-#define BLOCK_EXAMPLES_SIZE 6
+#define BLOCK_EXAMPLES_SIZE 7
 
 const static Point blockExamples[BLOCK_EXAMPLES_SIZE][POSITIONS_SIZE][POSITIONS_SIZE] = {
 	//けけけけ
 	{
 		{ { 0, 5 }, { 0, 6 }, { 0, 7 }, { 0, 8 } },
-		{ { -2, 6 }, { -1, 6 }, { 0, 6 }, { 1, 6 } },
+		{ { -1, 6 }, { 0, 6 }, { 1, 6 }, { 2, 6 } },
 		{ { 0, 5 }, { 0, 6 }, { 0, 7 }, { 0, 8 } },
-		{ { -2, 6 }, { -1, 6 }, { 0, 6 }, { 1, 6 } }
+		{ { -1, 6 }, { 0, 6 }, { 1, 6 }, { 2, 6 } }
 	},
 	//    け
 	//けけけ
@@ -38,6 +38,14 @@ const static Point blockExamples[BLOCK_EXAMPLES_SIZE][POSITIONS_SIZE][POSITIONS_
 		{ { -1, 8 }, { 0, 8 }, { 0, 7 }, { 1, 7 } },
 		{ { 0, 6 }, { 0, 7 }, { 1, 7 }, { 1, 8 } },
 		{ { -1, 8 }, { 0, 8 }, { 0, 7 }, { 1, 7 } }
+	},
+	//  け
+	//けけけ
+	{
+		{ { 0, 7 }, { 1, 6 }, { 1, 7 }, { 1, 8 } },
+		{ { -1, 7 }, { 0, 7 }, { 0, 8 }, { 1, 7 } },
+		{ { 0, 6 }, { 0, 7 }, { 0, 8 }, { 1, 7 } },
+		{ { -1, 7 }, { 0, 6 }, { 0, 7 }, { 1, 7 } }
 	},
 	//け
 	//けけけ
@@ -79,6 +87,7 @@ Block Block_Make(int isFirst, Block block){
 	}
 	block.next = rand() % BLOCK_EXAMPLES_SIZE;
 	block.direction = UP;
+	block.color = rand() % (FONT_COLOR_SIZE - 2) + 2;
 	return block;
 }
 

@@ -159,10 +159,14 @@ void TetrisManager_Print(TetrisManager* tetrisManager){
 				printf("  ");
 				break;
 			case MOVING_BLOCK:
+				FontUtil_ChangeFontColor(tetrisManager->block.color);
 				printf("бс");
+				FontUtil_ChangeFontColor(WHITE);
 				break;
 			case FIXED_BLOCK:
+				FontUtil_ChangeFontColor(JADE);
 				printf("в╩");
+				FontUtil_ChangeFontColor(WHITE);
 				break;
 			case LEFT_WALL:
 			case RIGHT_WALL:

@@ -137,11 +137,16 @@ void Block_PrintNext(Block block, int x, int y){
 		printf("    бсбс");
 		break;
 	case 4:
-		printf("бс      ");
+		printf("  бс   ");
 		CursorUtil_GotoXY(x, y++);
 		printf("бсбсбс  ");
 		break;
 	case 5:
+		printf("бс      ");
+		CursorUtil_GotoXY(x, y++);
+		printf("бсбсбс  ");
+		break;
+	case 6:
 		printf("  бсбс  ");
 		CursorUtil_GotoXY(x, y++);
 		printf("  бсбс  ");

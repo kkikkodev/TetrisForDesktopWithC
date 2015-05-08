@@ -10,15 +10,15 @@ int main(int argc, char* argv[]){
 	TetrisView_StartGame(&tetrisView);
 	int processType;
 	int direction;
-	DWORD tickCount;
+	DWORD tickCount = GetTickCount();
 	while (True){
 		processType = AUTO;
 		direction = DOWN;
-		tickCount = GetTickCount();
 		while (True){
 			if (GetTickCount() - tickCount > TetrisView_GetDownMilliSecond(&tetrisView)){
 				processType = AUTO;
 				direction = DOWN;
+				tickCount = GetTickCount();
 				break;
 			}
 			if (_kbhit()){
@@ -33,6 +33,7 @@ int main(int argc, char* argv[]){
 					else if (key == DOWN_KEY_CODE){
 						processType = DIRECTION;
 						direction = DOWN;
+						tickCount = GetTickCount();
 						break;
 					}
 					else if (key == LEFT_KEY_CODE){
@@ -49,6 +50,7 @@ int main(int argc, char* argv[]){
 				else{
 					if (key == SPACE_BAR_KEY_CODE){
 						processType = DIRECT_DOWN;
+						tickCount = GetTickCount();
 						break;
 					}
 				}

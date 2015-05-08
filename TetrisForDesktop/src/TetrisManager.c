@@ -47,10 +47,6 @@ void TetrisManager_ChangeBoardByDirection(TetrisManager* tetrisManager, int dire
 	int checkResult = TetrisManager_CheckValidPosition(tetrisManager, direction);
 	if (checkResult == EMPTY){
 		tetrisManager->block = Block_Move(tetrisManager->block, direction);
-		if (direction == UP){
-			TetrisManager_Sleep(tetrisManager);
-			tetrisManager->block = Block_Move(tetrisManager->block, DOWN);
-		}
 	}
 	else{
 		if (direction == UP){
@@ -72,15 +68,6 @@ void TetrisManager_ChangeBoardByDirection(TetrisManager* tetrisManager, int dire
 				tetrisManager->block = Block_Move(tetrisManager->block, tempDirection);
 			} while (TetrisManager_CheckValidPosition(tetrisManager, direction) == tempCheckResult);
 			tetrisManager->block = Block_Move(tetrisManager->block, direction);
-		}
-		else{
-			if (direction == RIGHT && checkResult == RIGHT_WALL ||
-				direction == LEFT && checkResult == LEFT_WALL ||
-				direction == RIGHT && checkResult == FIXED_BLOCK ||
-				direction == LEFT && checkResult == FIXED_BLOCK){
-				TetrisManager_Sleep(tetrisManager);
-				tetrisManager->block = Block_Move(tetrisManager->block, DOWN);
-			}
 		}
 	}
 	_TetrisManager_ChangeBoardByStatus(tetrisManager, MOVING_BLOCK);

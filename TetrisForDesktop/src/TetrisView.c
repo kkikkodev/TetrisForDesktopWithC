@@ -4,6 +4,7 @@
 #include "TetrisView.h"
 #include "TetrisManager.h"
 #include "Constant.h"
+#include "Util.h"
 
 #pragma comment(lib, "winmm.lib")
 
@@ -33,7 +34,7 @@ void TetrisView_ProcessGame(TetrisView* tetrisView, int processType, int directi
 	}
 	if (TetrisManager_IsReachedToBottom(&tetrisView->tetrisManager)){
 		//if you are going to move the block which has bottom wall or bottom fixed block, permit the block to move the direction
-		if (processType == DIRECTION && direction == LEFT && (TetrisManager_CheckValidPosition(&tetrisView->tetrisManager, LEFT) == EMPTY) || 
+		if (processType == DIRECTION && direction == LEFT && (TetrisManager_CheckValidPosition(&tetrisView->tetrisManager, LEFT) == EMPTY) ||
 			processType == DIRECTION && direction == RIGHT && (TetrisManager_CheckValidPosition(&tetrisView->tetrisManager, RIGHT) == EMPTY)){
 			TetrisManager_ChangeBoardByDirection(&tetrisView->tetrisManager, direction);
 		}
@@ -41,8 +42,8 @@ void TetrisView_ProcessGame(TetrisView* tetrisView, int processType, int directi
 			TetrisView_EndGame(tetrisView);
 		}
 	}
-	TetrisManager_ProcessDeletingLines(&tetrisView->tetrisManager);
 	TetrisManager_Print(&tetrisView->tetrisManager);
+	TetrisManager_ProcessDeletingLines(&tetrisView->tetrisManager);
 }
 
 void TetrisView_EndGame(TetrisView* tetrisView){
@@ -53,6 +54,20 @@ void TetrisView_EndGame(TetrisView* tetrisView){
 		tetrisView->tetrisManager.deletedLineCount);
 	system("pause");
 	exit(-1);
+}
+
+void TetrisView_PauseGame(TetrisView* tetrisView){
+	PlaySound(NULL, 0, 0);
+	FontUtil_ChangeFontColor(LIGHT_YELLOW);
+	CursorUtil_GotoXY(BOARD_ROW_SIZE / 2 + 1, BOARD_COL_SIZE / 2 + 1);
+	printf("[pause]");
+	CursorUtil_GotoXY(BOARD_ROW_SIZE / 2 - 2, BOARD_COL_SIZE / 2 + 2);
+	printf("press any key");
+	CursorUtil_GotoXY(BOARD_ROW_SIZE / 2 - 1, BOARD_COL_SIZE / 2 + 3);
+	printf("to continue");
+	FontUtil_ChangeFontColor(WHITE);
+	system("pause > nul");
+	PlaySound(TEXT(TETRIS_BACKGROUND_MUSIC_FILE_NAME), NULL, SND_ASYNC | SND_LOOP);
 }
 
 DWORD TetrisView_GetDownMilliSecond(TetrisView* tetrisView){

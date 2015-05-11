@@ -11,11 +11,15 @@
 #define STATUS_POSITION_X_TO_PRINT 40
 #define STATUS_POSITION_Y_TO_PRINT 3
 
+#define LINES_TO_DELETE_HIGHTING_COUNT 3
+#define LINES_TO_DELETE_HIGHTING_MILLISECOND 100
+
 static void _TetrisManager_ClearBoard(TetrisManager* tetrisManager);
 static void _TetrisManager_ChangeBoardByStatus(TetrisManager* tetrisManager, int status);
 static void _TetrisManager_UpSpeedLevel(TetrisManager* tetrisManager);
 static void _TetrisManager_SearchLineIndexesToDelete(TetrisManager* tetrisManager, int* indexes, int* count);
 static void _TetrisManager_DeleteLines(TetrisManager* tetrisManager, int* indexes, int count);
+static void _TetrisManager_HighlightLinesToDelete(TetrisManager* tetrisManager, int* indexes, int count);
 
 void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel){
 	Block block;
@@ -89,6 +93,7 @@ void TetrisManager_ProcessDeletingLines(TetrisManager* tetrisManager){
 	int i;
 	_TetrisManager_SearchLineIndexesToDelete(tetrisManager, indexes, &count);
 	if (count > 0){
+		_TetrisManager_HighlightLinesToDelete(tetrisManager, indexes, count);
 		_TetrisManager_DeleteLines(tetrisManager, indexes, count);
 		for (i = tetrisManager->speedLevel; i <= tetrisManager->deletedLineCount / LEVELP_UP_CONDITION; i++){
 			_TetrisManager_UpSpeedLevel(tetrisManager);
@@ -287,4 +292,23 @@ static void _TetrisManager_DeleteLines(TetrisManager* tetrisManager, int* indexe
 		}
 	}
 	tetrisManager->deletedLineCount += count;
+}
+
+static void _TetrisManager_HighlightLinesToDelete(TetrisManager* tetrisManager, int* indexes, int count){
+	int i;
+	int j;
+	for (i = 0; i < LINES_TO_DELETE_HIGHTING_COUNT; i++){
+		FontUtil_ChangeFontColor(JADE);
+		TimeUtil_Sleep(LINES_TO_DELETE_HIGHTING_MILLISECOND);
+		for (j = 0; j < count; j++){
+			CursorUtil_GotoXY(2, indexes[j]);
+			printf("�ʢʢʢʢʢʢʢʢʢʢʢ�");
+		}
+		FontUtil_ChangeFontColor(WHITE);
+		TimeUtil_Sleep(LINES_TO_DELETE_HIGHTING_MILLISECOND);
+		for (j = 0; j < count; j++){
+			CursorUtil_GotoXY(2, indexes[j]);
+			printf("                        ");
+		}
+	}
 }

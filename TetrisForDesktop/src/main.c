@@ -53,6 +53,12 @@ int main(int argc, char* argv[]){
 						tickCount = GetTickCount();
 						break;
 					}
+					else if (key == ESC_KEY_CODE){
+						TetrisView_PauseGame(&tetrisView);
+						processType = AUTO;
+						tickCount = GetTickCount();
+						break;
+					}
 				}
 			}
 		}

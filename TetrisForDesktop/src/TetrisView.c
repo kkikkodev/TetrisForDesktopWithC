@@ -10,6 +10,8 @@
 
 #define TETRIS_BACKGROUND_MUSIC_FILE_NAME "..\\res\\tetris_background_music.wav"
 
+#define PROCESS_REACHED_CASE_COUNT 2
+
 void TetrisView_StartGame(TetrisView* tetrisView){
 	int speedLevel;
 	PlaySound(TEXT(TETRIS_BACKGROUND_MUSIC_FILE_NAME), NULL, SND_ASYNC | SND_LOOP);
@@ -23,6 +25,9 @@ void TetrisView_StartGame(TetrisView* tetrisView){
 }
 
 void TetrisView_ProcessGame(TetrisView* tetrisView, int processType, int direction){
+
+	//it is used to move left or right at bottom in case of space which you want to move is available
+	static int processReachedCaseCount = 0;
 	if (processType == DIRECTION){
 		TetrisManager_ChangeBoardByDirection(&tetrisView->tetrisManager, direction);
 	}
@@ -34,12 +39,14 @@ void TetrisView_ProcessGame(TetrisView* tetrisView, int processType, int directi
 	}
 	if (TetrisManager_IsReachedToBottom(&tetrisView->tetrisManager)){
 		//if you are going to move the block which has bottom wall or bottom fixed block, permit the block to move the direction
-		if (processType == DIRECTION && direction == LEFT && (TetrisManager_CheckValidPosition(&tetrisView->tetrisManager, LEFT) == EMPTY) ||
-			processType == DIRECTION && direction == RIGHT && (TetrisManager_CheckValidPosition(&tetrisView->tetrisManager, RIGHT) == EMPTY)){
-			TetrisManager_ChangeBoardByDirection(&tetrisView->tetrisManager, direction);
+		if (processReachedCaseCount == PROCESS_REACHED_CASE_COUNT){
+			if (TetrisManager_ProcessReachedCase(&tetrisView->tetrisManager) == END){
+				TetrisView_EndGame(tetrisView);
+			}
+			processReachedCaseCount = 0;
 		}
-		if (TetrisManager_ProcessReachedCase(&tetrisView->tetrisManager) == END){
-			TetrisView_EndGame(tetrisView);
+		else{
+			processReachedCaseCount++;
 		}
 	}
 	TetrisManager_Print(&tetrisView->tetrisManager);

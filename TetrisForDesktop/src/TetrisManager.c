@@ -8,8 +8,8 @@
 #define INITAL_SPEED 400
 #define SPEED_LEVEL_OFFSET 50
 #define LEVELP_UP_CONDITION 3
-#define STATUS_POSITION_X_TO_PRINT 40
-#define STATUS_POSITION_Y_TO_PRINT 3
+#define STATUS_POSITION_X_TO_PRINT 43
+#define STATUS_POSITION_Y_TO_PRINT 5
 
 #define LINES_TO_DELETE_HIGHTING_COUNT 3
 #define LINES_TO_DELETE_HIGHTING_MILLISECOND 100
@@ -297,18 +297,23 @@ static void _TetrisManager_DeleteLines(TetrisManager* tetrisManager, int* indexe
 static void _TetrisManager_HighlightLinesToDelete(TetrisManager* tetrisManager, int* indexes, int count){
 	int i;
 	int j;
+	int k;
 	for (i = 0; i < LINES_TO_DELETE_HIGHTING_COUNT; i++){
 		FontUtil_ChangeFontColor(JADE);
 		TimeUtil_Sleep(LINES_TO_DELETE_HIGHTING_MILLISECOND);
 		for (j = 0; j < count; j++){
 			CursorUtil_GotoXY(2, indexes[j]);
-			printf("�ʢʢʢʢʢʢʢʢʢʢʢ�");
+			for (k = 0; k < BOARD_COL_SIZE - 2; k++){
+				printf("��");
+			}
 		}
 		FontUtil_ChangeFontColor(WHITE);
 		TimeUtil_Sleep(LINES_TO_DELETE_HIGHTING_MILLISECOND);
 		for (j = 0; j < count; j++){
 			CursorUtil_GotoXY(2, indexes[j]);
-			printf("                        ");
+			for (k = 0; k < BOARD_COL_SIZE - 2; k++){
+				printf("  ");
+			}
 		}
 	}
 }

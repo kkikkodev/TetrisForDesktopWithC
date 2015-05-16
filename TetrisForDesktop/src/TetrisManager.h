@@ -7,7 +7,7 @@ enum GameStatus{
 	PLAYING, END
 };
 
-#define BOARD_ROW_SIZE 20
+#define BOARD_ROW_SIZE 24
 #define BOARD_COL_SIZE 14
 
 typedef struct _tetrisManager{

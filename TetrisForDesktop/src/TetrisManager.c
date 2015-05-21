@@ -5,8 +5,8 @@
 #include "Util.h"
 #include "Constant.h"
 
-#define INITAL_SPEED 400
-#define SPEED_LEVEL_OFFSET 50
+#define INITAL_SPEED 300
+#define SPEED_LEVEL_OFFSET 40
 #define LEVELP_UP_CONDITION 3
 #define STATUS_POSITION_X_TO_PRINT 43
 #define STATUS_POSITION_Y_TO_PRINT 5

@@ -1,10 +1,6 @@
 #ifndef _BLOCK_H
 #define _BLOCK_H
-
-typedef struct _point{
-	int x;
-	int y;
-}Point;
+#include "Point.h"
 
 #define POSITIONS_SIZE 4
 

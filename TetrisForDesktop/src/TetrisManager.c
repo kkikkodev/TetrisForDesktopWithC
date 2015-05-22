@@ -37,7 +37,7 @@ int TetrisManager_CheckValidPosition(TetrisManager* tetrisManager, int direction
 	for (i = 0; i < POSITIONS_SIZE; i++){
 		int x = Block_GetPositions(temp)[i].x;
 		int y = Block_GetPositions(temp)[i].y;
-		if (tetrisManager->board[x][y] != EMPTY && tetrisManager->board[x][y] != MOVING_BLOCK){
+		if (!(tetrisManager->board[x][y] == EMPTY || tetrisManager->board[x][y] == MOVING_BLOCK)){
 			return tetrisManager->board[x][y];
 		}
 	}
@@ -53,20 +53,18 @@ void TetrisManager_ChangeBoardByDirection(TetrisManager* tetrisManager, int dire
 		tetrisManager->block = Block_Move(tetrisManager->block, direction);
 	}
 	else{
-		if (direction == UP){
-			switch (checkResult){
-			case TOP_WALL:
+		if (direction == UP && checkResult != FIXED_BLOCK){
+			if (checkResult == TOP_WALL){
 				tempDirection = DOWN;
 				tempCheckResult = TOP_WALL;
-				break;
-			case RIGHT_WALL:
+			}
+			else if (checkResult == RIGHT_WALL){
 				tempDirection = LEFT;
 				tempCheckResult = RIGHT_WALL;
-				break;
-			case LEFT_WALL:
+			}
+			else if (checkResult == LEFT_WALL){
 				tempDirection = RIGHT;
 				tempCheckResult = LEFT_WALL;
-				break;
 			}
 			do{
 				tetrisManager->block = Block_Move(tetrisManager->block, tempDirection);
@@ -136,16 +134,24 @@ void TetrisManager_Print(TetrisManager* tetrisManager){
 		for (j = 0; j < BOARD_COL_SIZE; j++){
 			switch (tetrisManager->board[i][j]){
 			case LEFT_TOP_EDGE:
+				FontUtil_ChangeFontColor(LIGHT_WHITE);
 				printf("¦Ç");
+				FontUtil_ChangeFontColor(WHITE);
 				break;
 			case RIGHT_TOP_EDGE:
+				FontUtil_ChangeFontColor(LIGHT_WHITE);
 				printf("¦Á");
+				FontUtil_ChangeFontColor(WHITE);
 				break;
 			case LEFT_BOTTOM_EDGE:
+				FontUtil_ChangeFontColor(LIGHT_WHITE);
 				printf("¦Å");
+				FontUtil_ChangeFontColor(WHITE);
 				break;
 			case RIGHT_BOTTOM_EDGE:
+				FontUtil_ChangeFontColor(LIGHT_WHITE);
 				printf("¦Ã");
+				FontUtil_ChangeFontColor(WHITE);
 				break;
 			case EMPTY:
 				printf("  ");
@@ -162,32 +168,36 @@ void TetrisManager_Print(TetrisManager* tetrisManager){
 				break;
 			case LEFT_WALL:
 			case RIGHT_WALL:
+				FontUtil_ChangeFontColor(LIGHT_WHITE);
 				printf("£ü");
+				FontUtil_ChangeFontColor(WHITE);
 				break;
 			case TOP_WALL:
 			case BOTTOM_WALL:
+				FontUtil_ChangeFontColor(LIGHT_WHITE);
 				printf("¡ª");
+				FontUtil_ChangeFontColor(WHITE);
 				break;
 			}
 		}
 		printf("\n");
 	}
-	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT);
-	printf("********* Tetris *********\n");
 	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 1);
-	printf("[%d level / %d lines deleted]\n", tetrisManager->speedLevel, tetrisManager->deletedLineCount);
+	printf("[%d level / %d lines]\n", tetrisManager->speedLevel, tetrisManager->deletedLineCount);
 	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 3);
-	printf("[Key Description]\n");
+	printf("[key description]\n");
 	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 4);
-	printf("¡ç : move left\n");
+	printf("¡ç       : move left\n");
 	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 5);
-	printf("¡æ : move right\n");
+	printf("¡æ       : move right\n");
 	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 6);
-	printf("¡é : move down\n");
+	printf("¡é       : move down\n");
 	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 7);
-	printf("¡è : rotate\n");
+	printf("¡è       : rotate\n");
 	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 8);
 	printf("SpaceBar : direct down\n");
+	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 9);
+	printf("ESC      : pause\n");
 	Block_PrintNext(tetrisManager->block, STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 11);
 	CursorUtil_Hide();
 }

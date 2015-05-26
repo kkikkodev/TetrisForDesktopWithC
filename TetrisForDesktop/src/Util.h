@@ -3,6 +3,5 @@
 
 void CursorUtil_GotoXY(int x, int y);
 void CursorUtil_Hide();
-void TimeUtil_Sleep(DWORD milliSecond);
 
 #endif

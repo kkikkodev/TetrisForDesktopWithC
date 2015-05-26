@@ -139,7 +139,7 @@ void TetrisManager_Sleep(TetrisManager* tetrisManager){
 			milliSecond -= (SPEED_LEVEL_OFFSET / 5);
 		}
 	}
-	TimeUtil_Sleep(milliSecond);
+	Sleep(milliSecond);
 }
 
 void TetrisManager_Print(TetrisManager* tetrisManager){

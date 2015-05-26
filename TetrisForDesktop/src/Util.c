@@ -12,14 +12,3 @@ void CursorUtil_Hide(){
 	cursorInfo.bVisible = FALSE;
 	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
 }
-
-void TimeUtil_Sleep(DWORD milliSecond){
-	MSG msg;
-	DWORD startTime = GetTickCount();
-	while (GetTickCount() - startTime < milliSecond){
-		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)){
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-	}
-}

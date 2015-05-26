@@ -120,7 +120,7 @@ int TetrisManager_ProcessReachedCase(TetrisManager* tetrisManager){
 }
 
 void TetrisManager_Sleep(TetrisManager* tetrisManager){
-	TimeUtil_Sleep(TetrisManager_GetDownMilliSecond(tetrisManager));
+	Sleep(TetrisManager_GetDownMilliSecond(tetrisManager));
 }
 
 void TetrisManager_Print(TetrisManager* tetrisManager){

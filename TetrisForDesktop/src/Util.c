@@ -13,17 +13,6 @@ void CursorUtil_Hide(){
 	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cursorInfo);
 }
 
-void TimeUtil_Sleep(DWORD milliSecond){
-	MSG msg;
-	DWORD startTime = GetTickCount();
-	while (GetTickCount() - startTime < milliSecond){
-		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)){
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-		}
-	}
-}
-
 void FontUtil_ChangeFontColor(int color){
 	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 }

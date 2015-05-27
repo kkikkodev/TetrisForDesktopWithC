@@ -98,7 +98,8 @@ void TetrisView_AddRanking(TetrisView* tetrisView){
 	Ranking ranking;
 	int x = ADD_ID_POSITION_X_TO_PRINT;
 	int y = ADD_ID_POSITION_Y_TO_PRINT;
-	char id[ID_SIZE + 1];
+	int i;
+	char id[ID_SIZE + 1] = {'\0', };
 	system("cls");
 	CursorUtil_GotoXY(x, y++);
 	printf("旨收收收收收收收收收收收收收旬");
@@ -112,10 +113,13 @@ void TetrisView_AddRanking(TetrisView* tetrisView){
 	y -= 2;
 	CursorUtil_GotoXY(x, y++);
 	fgets(id, ID_SIZE + 1, stdin);
-	if (strlen(id) < ID_SIZE){
-		id[strlen(id) - 1] = '\0';
+	for (i = ID_SIZE; i >= 0; i--){
+		if (id[i] == '\n'){
+			id[i] = '\0';
+			break;
+		}
 	}
-	else{
+	if (i == -1){
 		while (getchar() != '\n');
 	}
 	strcpy(ranking.id, id);

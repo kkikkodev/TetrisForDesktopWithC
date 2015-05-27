@@ -29,6 +29,7 @@ void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel){
 	tetrisManager->block = Block_Make(True, block);
 	tetrisManager->deletedLineCount = 0;
 	tetrisManager->speedLevel = speedLevel;
+	tetrisManager->score = 0;
 }
 
 int TetrisManager_CheckValidPosition(TetrisManager* tetrisManager, int direction){
@@ -88,14 +89,10 @@ void TetrisManager_ProcessDirectDown(TetrisManager* tetrisManager){
 void TetrisManager_ProcessDeletingLines(TetrisManager* tetrisManager){
 	int indexes[BOARD_ROW_SIZE];
 	int count;
-	int i;
 	_TetrisManager_SearchLineIndexesToDelete(tetrisManager, indexes, &count);
 	if (count > 0){
 		_TetrisManager_HighlightLinesToDelete(tetrisManager, indexes, count);
 		_TetrisManager_DeleteLines(tetrisManager, indexes, count);
-		for (i = tetrisManager->speedLevel; i <= tetrisManager->deletedLineCount / LEVELP_UP_CONDITION; i++){
-			_TetrisManager_UpSpeedLevel(tetrisManager);
-		}
 	}
 }
 
@@ -183,7 +180,7 @@ void TetrisManager_Print(TetrisManager* tetrisManager){
 		printf("\n");
 	}
 	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 1);
-	printf("[%d level / %d lines]\n", tetrisManager->speedLevel, tetrisManager->deletedLineCount);
+	printf("[%d level / %d lines / %d score]\n", tetrisManager->speedLevel, tetrisManager->deletedLineCount, tetrisManager->score);
 	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 3);
 	printf("[key description]\n");
 	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 4);
@@ -301,7 +298,13 @@ static void _TetrisManager_DeleteLines(TetrisManager* tetrisManager, int* indexe
 			tetrisManager->board[i][j] = temp[i][j];
 		}
 	}
-	tetrisManager->deletedLineCount += count;
+	for (i = 0; i < count; i++){
+		tetrisManager->score += tetrisManager->speedLevel * 100;
+		tetrisManager->deletedLineCount++;
+		if (tetrisManager->deletedLineCount % LEVELP_UP_CONDITION == 0){
+			_TetrisManager_UpSpeedLevel(tetrisManager);
+		}
+	}
 }
 
 static void _TetrisManager_HighlightLinesToDelete(TetrisManager* tetrisManager, int* indexes, int count){

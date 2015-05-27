@@ -15,6 +15,7 @@ typedef struct _tetrisManager{
 	Block block;
 	int deletedLineCount;
 	int speedLevel;
+	int score;
 }TetrisManager;
 
 void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel); 

@@ -8,12 +8,14 @@
 #define INITAL_SPEED 300
 #define SPEED_LEVEL_OFFSET 40
 #define LEVELP_UP_CONDITION 3
-#define STATUS_POSITION_X_TO_PRINT 43
-#define STATUS_POSITION_Y_TO_PRINT 5
+#define STATUS_POSITION_X_TO_PRINT 38
+#define STATUS_POSITION_Y_TO_PRINT 3
 
 #define LINES_TO_DELETE_HIGHTING_COUNT 3
 #define LINES_TO_DELETE_HIGHTING_MILLISECOND 100
 
+static void _TetrisManager_PrintStatus(TetrisManager* tetrisManager, int* x, int* y);
+static void _TetrisManager_PrintKeys(TetrisManager* tetrisManager, int* x, int* y);
 static void _TetrisManager_ClearBoard(TetrisManager* tetrisManager);
 static void _TetrisManager_ChangeBoardByStatus(TetrisManager* tetrisManager, int status);
 static void _TetrisManager_UpSpeedLevel(TetrisManager* tetrisManager);
@@ -126,6 +128,8 @@ void TetrisManager_Sleep(TetrisManager* tetrisManager){
 void TetrisManager_Print(TetrisManager* tetrisManager){
 	int i;
 	int j;
+	int x;
+	int y;
 	CursorUtil_GotoXY(0, 0);
 	for (i = 0; i < BOARD_ROW_SIZE; i++){
 		for (j = 0; j < BOARD_COL_SIZE; j++){
@@ -179,23 +183,15 @@ void TetrisManager_Print(TetrisManager* tetrisManager){
 		}
 		printf("\n");
 	}
-	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 1);
-	printf("[%d level / %d lines / %d score]\n", tetrisManager->speedLevel, tetrisManager->deletedLineCount, tetrisManager->score);
-	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 3);
-	printf("[key description]\n");
-	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 4);
-	printf("∠       : move left\n");
-	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 5);
-	printf("⊥       : move right\n");
-	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 6);
-	printf("⊿       : move down\n");
-	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 7);
-	printf("∟       : rotate\n");
-	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 8);
-	printf("SpaceBar : direct down\n");
-	CursorUtil_GotoXY(STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 9);
-	printf("ESC      : pause\n");
-	Block_PrintNext(tetrisManager->block, STATUS_POSITION_X_TO_PRINT, STATUS_POSITION_Y_TO_PRINT + 11);
+	x = STATUS_POSITION_X_TO_PRINT;
+	y = STATUS_POSITION_Y_TO_PRINT;
+	_TetrisManager_PrintStatus(tetrisManager, &x, &y);
+	x += 6;
+	y += 2;
+	_TetrisManager_PrintKeys(tetrisManager, &x, &y);
+	x += 3;
+	y += 2;
+	Block_PrintNext(tetrisManager->block, x, y);
 	CursorUtil_Hide();
 }
 
@@ -211,6 +207,34 @@ DWORD TetrisManager_GetDownMilliSecond(TetrisManager* tetrisManager){
 		}
 	}
 	return milliSecond;
+}
+
+static void _TetrisManager_PrintStatus(TetrisManager* tetrisManager, int* x, int* y){
+	CursorUtil_GotoXY(*x, (*y)++);
+	printf("旨 Lv 旬  旨 Line 旬  旨 TotalScore 旬");
+	CursorUtil_GotoXY(*x, (*y)++);
+	printf("早%3d 早  早%4d  早  早%7d     早", tetrisManager->speedLevel, tetrisManager->deletedLineCount, tetrisManager->score);
+	CursorUtil_GotoXY(*x, (*y)++); 
+	printf("曲收收旭  曲收收收旭  曲收收收收收收旭");
+}
+
+static void _TetrisManager_PrintKeys(TetrisManager* tetrisManager, int* x, int* y){
+	CursorUtil_GotoXY(*x, (*y)++); 
+	printf("旨收收收收 Keys 收收收收旬");
+	CursorUtil_GotoXY(*x, (*y)++); 
+	printf("早∠       早move left  早");
+	CursorUtil_GotoXY(*x, (*y)++); 
+	printf("早⊥       早move right 早");
+	CursorUtil_GotoXY(*x, (*y)++); 
+	printf("早⊿       早move down  早");
+	CursorUtil_GotoXY(*x, (*y)++); 
+	printf("早∟       早rotate     早");
+	CursorUtil_GotoXY(*x, (*y)++); 
+	printf("早SpaceBar 早direct down早");
+	CursorUtil_GotoXY(*x, (*y)++); 
+	printf("早ESC      早pause      早");
+	CursorUtil_GotoXY(*x, (*y)++); 
+	printf("曲收收收收收收收收收收收旭");
 }
 
 static void _TetrisManager_ClearBoard(TetrisManager* tetrisManager){

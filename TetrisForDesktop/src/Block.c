@@ -110,48 +110,50 @@ Point* Block_GetPositions(Block block){
 }
 
 void Block_PrintNext(Block block, int x, int y){
-	CursorUtil_GotoXY(x, y);
-	printf("[Next block]\n");
-	x += 3;
-	y += 2;
+
 	CursorUtil_GotoXY(x, y++);
+	printf("旨收 Next Block 收旬");
+	CursorUtil_GotoXY(x, y++);
+
 	switch (block.next){
 	case 0:
-		printf("﹥﹥﹥﹥");
+		printf("早    ﹥﹥﹥﹥    早");
 		CursorUtil_GotoXY(x, y++);
-		printf("        ");
+		printf("早                早");
 		break;
 	case 1:
-		printf("      ﹥");
+		printf("早          ﹥    早");
 		CursorUtil_GotoXY(x, y++);
-		printf("  ﹥﹥﹥");
+		printf("早      ﹥﹥﹥    早");
 		break;
 	case 2:
-		printf("    ﹥﹥");
+		printf("早       ﹥﹥     早");
 		CursorUtil_GotoXY(x, y++);
-		printf("  ﹥﹥  ");
+		printf("早     ﹥﹥       早");
 		break;
 	case 3:
-		printf("  ﹥﹥  ");
+		printf("早     ﹥﹥       早");
 		CursorUtil_GotoXY(x, y++);
-		printf("    ﹥﹥");
+		printf("早       ﹥﹥     早");
 		break;
 	case 4:
-		printf("  ﹥   ");
+		printf("早       ﹥       早");
 		CursorUtil_GotoXY(x, y++);
-		printf("﹥﹥﹥  ");
+		printf("早     ﹥﹥﹥     早");
 		break;
 	case 5:
-		printf("﹥      ");
+		printf("早     ﹥         早");
 		CursorUtil_GotoXY(x, y++);
-		printf("﹥﹥﹥  ");
+		printf("早     ﹥﹥﹥     早");
 		break;
 	case 6:
-		printf("  ﹥﹥  ");
+		printf("早      ﹥﹥      早");
 		CursorUtil_GotoXY(x, y++);
-		printf("  ﹥﹥  ");
+		printf("早      ﹥﹥      早");
 		break;
 	}
+	CursorUtil_GotoXY(x, y++);
+	printf("曲收收收收收收收收旭");
 }
 
 static Block _Block_MoveToDown(Block block){

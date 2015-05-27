@@ -80,7 +80,9 @@ int main(int argc, char* argv[]){
 				}
 				TetrisView_ProcessGame(&tetrisView, processType, direction);
 				if (tetrisView.endMenu == RANKING_END_MENU){
-				
+					TetrisView_AddRanking(&tetrisView);
+					TetrisView_ShowRanking(&tetrisView);
+					break;
 				}
 				else if (tetrisView.endMenu == MAIN_MENU_END_MENU){
 					break;
@@ -92,6 +94,7 @@ int main(int argc, char* argv[]){
 			}
 			break;
 		case RANKING_MAIN_MENU:
+			TetrisView_ShowRanking(&tetrisView);
 			break;
 		case SETTING_MAIN_MENU:
 			break;

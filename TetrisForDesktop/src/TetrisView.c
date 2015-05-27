@@ -12,6 +12,8 @@
 #define TETRIS_BACKGROUND_MUSIC_FILE_NAME "..\\res\\tetris_background_music.wav"
 
 #define PROCESS_REACHED_CASE_COUNT 2
+#define ADD_ID_POSITION_X_TO_PRINT 25
+#define ADD_ID_POSITION_Y_TO_PRINT 10
 
 enum MenuStartPosition{
 	MAIN_MENU_X = 18, MAIN_MENU_Y = 7, PAUSE_MENU_X = 5, PAUSE_MENU_Y = 12, END_MENU_X = 28, END_MENU_Y = 8
@@ -79,6 +81,50 @@ void TetrisView_EndGame(TetrisView* tetrisView){
 	PlaySound(NULL, 0, 0);
 	TetrisView_ProcessEndMenu(tetrisView);
 }
+
+void TetrisView_ShowRanking(TetrisView* tetrisView){
+	RankingManager_Create(&tetrisView->rankingManager);
+	RankingManager_Load(&tetrisView->rankingManager);
+	RankingManager_Print(&tetrisView->rankingManager);
+	RankingManager_Destroy(&tetrisView->rankingManager);
+}
+
+void TetrisView_AddRanking(TetrisView* tetrisView){
+	Ranking ranking;
+	int x = ADD_ID_POSITION_X_TO_PRINT;
+	int y = ADD_ID_POSITION_Y_TO_PRINT;
+	char id[ID_SIZE + 1];
+	system("cls");
+	CursorUtil_GotoXY(x, y++);
+	printf("旨收收收收收收收收收收收收收旬");
+	CursorUtil_GotoXY(x, y++);
+	printf("早Input ID (%d chars limit!)早", ID_SIZE);
+	CursorUtil_GotoXY(x, y++);
+	printf("早:                         早");
+	CursorUtil_GotoXY(x, y++);
+	printf("曲收收收收收收收收收收收收收旭");
+	x += 4;
+	y -= 2;
+	CursorUtil_GotoXY(x, y++);
+	fgets(id, ID_SIZE + 1, stdin);
+	if (strlen(id) <= ID_SIZE){
+		id[strlen(id) - 1] = '\0';
+	}
+	else{
+		while (getchar() != '\n');
+	}
+	strcpy(ranking.id, id);
+	ranking.score = tetrisView->tetrisManager.score;
+	ranking.level = tetrisView->tetrisManager.speedLevel;
+	ranking.deletedLineCount = tetrisView->tetrisManager.deletedLineCount;
+	ranking.timestamp = time(NULL);
+	RankingManager_Create(&tetrisView->rankingManager);
+	RankingManager_Load(&tetrisView->rankingManager);
+	RankingManager_Add(&tetrisView->rankingManager, ranking);
+	RankingManager_Save(&tetrisView->rankingManager);
+	RankingManager_Destroy(&tetrisView->rankingManager);
+}
+
 DWORD TetrisView_GetDownMilliSecond(TetrisView* tetrisView){
 	return TetrisManager_GetDownMilliSecond(&tetrisView->tetrisManager);
 }

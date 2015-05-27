@@ -14,6 +14,8 @@
 #define PROCESS_REACHED_CASE_COUNT 2
 #define ADD_ID_POSITION_X_TO_PRINT 25
 #define ADD_ID_POSITION_Y_TO_PRINT 10
+#define SETTING_POSITION_X_TO_PRINT 30
+#define SETTING_POSITION_Y_TO_PRINT 10
 
 enum MenuStartPosition{
 	MAIN_MENU_X = 18, MAIN_MENU_Y = 7, PAUSE_MENU_X = 5, PAUSE_MENU_Y = 12, END_MENU_X = 28, END_MENU_Y = 8
@@ -21,7 +23,10 @@ enum MenuStartPosition{
 
 void TetrisView_StartGame(TetrisView* tetrisView){
 	PlaySound(TEXT(TETRIS_BACKGROUND_MUSIC_FILE_NAME), NULL, SND_ASYNC | SND_LOOP);
-	TetrisManager_Init(&tetrisView->tetrisManager, 1);
+	if (!(tetrisView->level >= MIN_SPEED_LEVEL && tetrisView->level <= MAX_SPEED_LEVEL)){
+		tetrisView->level = MIN_SPEED_LEVEL;
+	}
+	TetrisManager_Init(&tetrisView->tetrisManager, tetrisView->level);
 	system("cls");
 	TetrisManager_Print(&tetrisView->tetrisManager);
 }
@@ -107,7 +112,7 @@ void TetrisView_AddRanking(TetrisView* tetrisView){
 	y -= 2;
 	CursorUtil_GotoXY(x, y++);
 	fgets(id, ID_SIZE + 1, stdin);
-	if (strlen(id) <= ID_SIZE){
+	if (strlen(id) < ID_SIZE){
 		id[strlen(id) - 1] = '\0';
 	}
 	else{
@@ -125,6 +130,42 @@ void TetrisView_AddRanking(TetrisView* tetrisView){
 	RankingManager_Destroy(&tetrisView->rankingManager);
 }
 
+void TetrisView_ShowSetting(TetrisView* tetrisView){
+	int x = SETTING_POSITION_X_TO_PRINT;
+	int y = SETTING_POSITION_Y_TO_PRINT;
+	if (!(tetrisView->level >= MIN_SPEED_LEVEL && tetrisView->level <= MAX_SPEED_LEVEL)){
+		tetrisView->level = MIN_SPEED_LEVEL;
+	}
+	system("cls");
+	CursorUtil_GotoXY(x, y++);
+	printf("旨收收收收收收收收收旬");
+	CursorUtil_GotoXY(x, y++);
+	printf("早Current Level : %2d早", tetrisView->level);
+	CursorUtil_GotoXY(x, y++);
+	printf("早New Level (%d ~ %d)早", MIN_SPEED_LEVEL, MAX_SPEED_LEVEL);
+	CursorUtil_GotoXY(x, y++);
+	printf("早:                 早");
+	CursorUtil_GotoXY(x, y++);
+	printf("曲收收收收收收收收收旭");
+	x += 4;
+	y -= 2;
+	CursorUtil_GotoXY(x, y++);
+	scanf("%d", &tetrisView->level);
+	if (tetrisView->level >= MIN_SPEED_LEVEL && tetrisView->level <= MAX_SPEED_LEVEL){
+		
+	}
+	else if (tetrisView->level < MIN_SPEED_LEVEL){
+		tetrisView->level = MIN_SPEED_LEVEL;
+	}
+	else if (tetrisView->level > MAX_SPEED_LEVEL){
+		tetrisView->level = MAX_SPEED_LEVEL;
+	}
+	else{
+		tetrisView->level = MIN_SPEED_LEVEL;
+	}
+	while(getchar() != '\n');
+}
+
 DWORD TetrisView_GetDownMilliSecond(TetrisView* tetrisView){
 	return TetrisManager_GetDownMilliSecond(&tetrisView->tetrisManager);
 }
@@ -137,6 +178,7 @@ void TetrisView_ProcessMainMenu(TetrisView* tetrisView){
 	int menuCount = 4;
 	int x = MAIN_MENU_X;
 	int y = MAIN_MENU_Y;
+	WindowUtil_ChangeWindowSize(WINDOW_LINE_SIZE, WINDOW_COL_SIZE);
 	system("cls");
 	FontUtil_ChangeFontColor(RED);
 	CursorUtil_GotoXY(x, y++);

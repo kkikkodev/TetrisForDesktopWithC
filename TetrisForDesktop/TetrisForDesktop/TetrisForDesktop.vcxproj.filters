@@ -33,6 +33,12 @@
     <ClCompile Include="..\src\Menu.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Array.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\RankingManager.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Block.h">
@@ -54,6 +60,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\Point.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Array.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\RankingManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

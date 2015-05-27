@@ -78,18 +78,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\Array.c" />
     <ClCompile Include="..\src\Block.c" />
     <ClCompile Include="..\src\main.c" />
     <ClCompile Include="..\src\Menu.c" />
+    <ClCompile Include="..\src\RankingManager.c" />
     <ClCompile Include="..\src\TetrisManager.c" />
     <ClCompile Include="..\src\TetrisView.c" />
     <ClCompile Include="..\src\Util.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\Array.h" />
     <ClInclude Include="..\src\Block.h" />
     <ClInclude Include="..\src\Constant.h" />
     <ClInclude Include="..\src\Menu.h" />
     <ClInclude Include="..\src\Point.h" />
+    <ClInclude Include="..\src\RankingManager.h" />
     <ClInclude Include="..\src\TetrisManager.h" />
     <ClInclude Include="..\src\TetrisView.h" />
     <ClInclude Include="..\src\Util.h" />

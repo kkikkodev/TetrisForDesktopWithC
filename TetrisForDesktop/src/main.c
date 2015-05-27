@@ -97,6 +97,7 @@ int main(int argc, char* argv[]){
 			TetrisView_ShowRanking(&tetrisView);
 			break;
 		case SETTING_MAIN_MENU:
+			TetrisView_ShowSetting(&tetrisView);
 			break;
 		}
 	} while (tetrisView.mainMenu != EXIT_MAIN_MENU);

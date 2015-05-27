@@ -7,6 +7,7 @@
 typedef struct _tetrisView{
 	TetrisManager tetrisManager;
 	RankingManager rankingManager;
+	int level;
 	int mainMenu;
 	int pauseMenu;
 	int endMenu;
@@ -18,6 +19,7 @@ void TetrisView_PauseGame(TetrisView* tetrisView);
 void TetrisView_EndGame(TetrisView* tetrisView);
 void TetrisView_ShowRanking(TetrisView* tetrisView);
 void TetrisView_AddRanking(TetrisView* tetrisView);
+void TetrisView_ShowSetting(TetrisView* tetrisView);
 DWORD TetrisView_GetDownMilliSecond(TetrisView* tetrisView); //make temporarily for calling from main function
 void TetrisView_ProcessMainMenu(TetrisView* tetrisView);
 void TetrisView_ProcessPauseMenu(TetrisView* tetrisView);

@@ -14,14 +14,22 @@
 #define LINES_TO_DELETE_HIGHTING_COUNT 3
 #define LINES_TO_DELETE_HIGHTING_MILLISECOND 100
 
+#define BOARD_TYPES_TO_PRINT_ROW_SIZE 12
+#define BOARD_TYPES_TO_PRINT_COL_SIZE 3
+
+static const char boardTypesToPrint[BOARD_TYPES_TO_PRINT_ROW_SIZE][BOARD_TYPES_TO_PRINT_COL_SIZE] = {
+	"  ", "﹥", "十", "﹤", "��", "��", "〞", "〞", "灰", "汐", "汍", "污"
+};
+
 static void _TetrisManager_PrintStatus(TetrisManager* tetrisManager, int* x, int* y);
 static void _TetrisManager_PrintKeys(TetrisManager* tetrisManager, int* x, int* y);
 static void _TetrisManager_ClearBoard(TetrisManager* tetrisManager);
-static void _TetrisManager_ChangeBoardByStatus(TetrisManager* tetrisManager, int status);
+static void _TetrisManager_ChangeBoardByStatus(TetrisManager* tetrisManager, int blockType, int status);
 static void _TetrisManager_UpSpeedLevel(TetrisManager* tetrisManager);
 static void _TetrisManager_SearchLineIndexesToDelete(TetrisManager* tetrisManager, int* indexes, int* count);
 static void _TetrisManager_DeleteLines(TetrisManager* tetrisManager, int* indexes, int count);
 static void _TetrisManager_HighlightLinesToDelete(TetrisManager* tetrisManager, int* indexes, int count);
+static Block _TetrisManager_GetBlockByType(TetrisManager* tetrisManager, int blockType);
 
 void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel){
 	Block block;
@@ -29,31 +37,44 @@ void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel){
 	memset(tetrisManager->board, 0, sizeof(char)* BOARD_ROW_SIZE * BOARD_COL_SIZE);
 	_TetrisManager_ClearBoard(tetrisManager);
 	tetrisManager->block = Block_Make(True, block);
+	TetrisManager_MakeShadow(tetrisManager);
 	tetrisManager->deletedLineCount = 0;
 	tetrisManager->speedLevel = speedLevel;
 	tetrisManager->score = 0;
 }
 
-int TetrisManager_CheckValidPosition(TetrisManager* tetrisManager, int direction){
-	Block temp = Block_Move(tetrisManager->block, direction);
+int TetrisManager_CheckValidPosition(TetrisManager* tetrisManager, int blockType, int direction){
+	Block temp = Block_Move(_TetrisManager_GetBlockByType(tetrisManager, blockType), direction);
 	int i;
 	for (i = 0; i < POSITIONS_SIZE; i++){
 		int x = Block_GetPositions(temp)[i].x;
+
+		//but now, x == 0 is empty
+		//originally, x == 0 is top wall
+		//because we convert the center top wall into empty intentionally
+		if (x == 0){
+			return TOP_WALL;
+		}
 		int y = Block_GetPositions(temp)[i].y;
-		if (!(tetrisManager->board[x][y] == EMPTY || tetrisManager->board[x][y] == MOVING_BLOCK)){
+		if (!(tetrisManager->board[x][y] == EMPTY || tetrisManager->board[x][y] == MOVING_BLOCK || tetrisManager->board[x][y] == SHADOW_BLOCK)){
 			return tetrisManager->board[x][y];
 		}
 	}
 	return EMPTY;
 }
 
-void TetrisManager_ChangeBoardByDirection(TetrisManager* tetrisManager, int direction){
+void TetrisManager_ChangeBoardByDirection(TetrisManager* tetrisManager, int blockType, int direction){
 	int tempDirection = DOWN;
 	int tempCheckResult = EMPTY;
 	_TetrisManager_ClearBoard(tetrisManager);
-	int checkResult = TetrisManager_CheckValidPosition(tetrisManager, direction);
+	int checkResult = TetrisManager_CheckValidPosition(tetrisManager, blockType, direction);
 	if (checkResult == EMPTY){
-		tetrisManager->block = Block_Move(tetrisManager->block, direction);
+		if (blockType == MOVING_BLOCK){
+			tetrisManager->block = Block_Move(tetrisManager->block, direction);
+		}
+		else if (blockType == SHADOW_BLOCK){
+			tetrisManager->shadow = Block_Move(tetrisManager->shadow, direction);
+		}
 	}
 	else{
 		if (direction == UP && checkResult != FIXED_BLOCK){
@@ -71,20 +92,21 @@ void TetrisManager_ChangeBoardByDirection(TetrisManager* tetrisManager, int dire
 			}
 			do{
 				tetrisManager->block = Block_Move(tetrisManager->block, tempDirection);
-			} while (TetrisManager_CheckValidPosition(tetrisManager, direction) == tempCheckResult);
+			} while (TetrisManager_CheckValidPosition(tetrisManager, MOVING_BLOCK, direction) == tempCheckResult);
 			tetrisManager->block = Block_Move(tetrisManager->block, direction);
 		}
 	}
-	_TetrisManager_ChangeBoardByStatus(tetrisManager, MOVING_BLOCK);
+	_TetrisManager_ChangeBoardByStatus(tetrisManager, SHADOW_BLOCK, SHADOW_BLOCK);
+	_TetrisManager_ChangeBoardByStatus(tetrisManager, MOVING_BLOCK, MOVING_BLOCK);
 }
 
 void TetrisManager_ChangeBoardByAuto(TetrisManager* tetrisManager){
-	TetrisManager_ChangeBoardByDirection(tetrisManager, DOWN);
+	TetrisManager_ChangeBoardByDirection(tetrisManager, MOVING_BLOCK, DOWN);
 }
 
 void TetrisManager_ProcessDirectDown(TetrisManager* tetrisManager){
-	while (!TetrisManager_IsReachedToBottom(tetrisManager)){
-		TetrisManager_ChangeBoardByDirection(tetrisManager, DOWN);
+	while (!TetrisManager_IsReachedToBottom(tetrisManager, MOVING_BLOCK)){
+		TetrisManager_ChangeBoardByDirection(tetrisManager, MOVING_BLOCK, DOWN);
 	}
 }
 
@@ -93,17 +115,23 @@ void TetrisManager_ProcessDeletingLines(TetrisManager* tetrisManager){
 	int count;
 	_TetrisManager_SearchLineIndexesToDelete(tetrisManager, indexes, &count);
 	if (count > 0){
+
+		//during hightlighting the lines to delete, hide moving block and shadow block
+		_TetrisManager_ChangeBoardByStatus(tetrisManager, MOVING_BLOCK, EMPTY);
+		_TetrisManager_ChangeBoardByStatus(tetrisManager, SHADOW_BLOCK, EMPTY);
+		TetrisManager_Print(tetrisManager);
 		_TetrisManager_HighlightLinesToDelete(tetrisManager, indexes, count);
 		_TetrisManager_DeleteLines(tetrisManager, indexes, count);
 	}
 }
 
-int TetrisManager_IsReachedToBottom(TetrisManager* tetrisManager){
+int TetrisManager_IsReachedToBottom(TetrisManager* tetrisManager, int blockType){
 	int i;
+	Block block = _TetrisManager_GetBlockByType(tetrisManager, blockType);
 	for (i = 0; i < POSITIONS_SIZE; i++){
-		int x = Block_GetPositions(tetrisManager->block)[i].x;
-		int y = Block_GetPositions(tetrisManager->block)[i].y;
-		if (tetrisManager->board[x + 1][y] != EMPTY && tetrisManager->board[x + 1][y] != MOVING_BLOCK){
+		int x = Block_GetPositions(block)[i].x;
+		int y = Block_GetPositions(block)[i].y;
+		if (!(tetrisManager->board[x + 1][y] == EMPTY || tetrisManager->board[x + 1][y] == MOVING_BLOCK || tetrisManager->board[x + 1][y] == SHADOW_BLOCK)){
 			return True;
 		}
 	}
@@ -111,9 +139,10 @@ int TetrisManager_IsReachedToBottom(TetrisManager* tetrisManager){
 }
 
 int TetrisManager_ProcessReachedCase(TetrisManager* tetrisManager){
-	_TetrisManager_ChangeBoardByStatus(tetrisManager, FIXED_BLOCK);
+	_TetrisManager_ChangeBoardByStatus(tetrisManager, MOVING_BLOCK, FIXED_BLOCK);
 	tetrisManager->block = Block_Make(False, tetrisManager->block);
-	if (TetrisManager_IsReachedToBottom(tetrisManager)){
+	TetrisManager_MakeShadow(tetrisManager);
+	if (TetrisManager_IsReachedToBottom(tetrisManager, MOVING_BLOCK)){
 		return END;
 	}
 	else{
@@ -121,7 +150,7 @@ int TetrisManager_ProcessReachedCase(TetrisManager* tetrisManager){
 	}
 }
 
-void TetrisManager_Sleep(TetrisManager* tetrisManager){ 
+void TetrisManager_Sleep(TetrisManager* tetrisManager){
 	Sleep(TetrisManager_GetDownMilliSecond(tetrisManager));
 }
 
@@ -134,52 +163,23 @@ void TetrisManager_Print(TetrisManager* tetrisManager){
 	for (i = 0; i < BOARD_ROW_SIZE; i++){
 		for (j = 0; j < BOARD_COL_SIZE; j++){
 			switch (tetrisManager->board[i][j]){
-			case LEFT_TOP_EDGE:
-				FontUtil_ChangeFontColor(LIGHT_WHITE);
-				printf("灰");
-				FontUtil_ChangeFontColor(WHITE);
-				break;
-			case RIGHT_TOP_EDGE:
-				FontUtil_ChangeFontColor(LIGHT_WHITE);
-				printf("汐");
-				FontUtil_ChangeFontColor(WHITE);
-				break;
-			case LEFT_BOTTOM_EDGE:
-				FontUtil_ChangeFontColor(LIGHT_WHITE);
-				printf("汍");
-				FontUtil_ChangeFontColor(WHITE);
-				break;
-			case RIGHT_BOTTOM_EDGE:
-				FontUtil_ChangeFontColor(LIGHT_WHITE);
-				printf("污");
-				FontUtil_ChangeFontColor(WHITE);
-				break;
+			case LEFT_TOP_EDGE: case RIGHT_TOP_EDGE: case LEFT_BOTTOM_EDGE: case RIGHT_BOTTOM_EDGE:
+			case LEFT_WALL: case RIGHT_WALL: case TOP_WALL: case BOTTOM_WALL:
 			case EMPTY:
-				printf("  ");
+				FontUtil_ChangeFontColor(LIGHT_WHITE);
 				break;
 			case MOVING_BLOCK:
 				FontUtil_ChangeFontColor(tetrisManager->block.color);
-				printf("﹥");
-				FontUtil_ChangeFontColor(WHITE);
 				break;
 			case FIXED_BLOCK:
 				FontUtil_ChangeFontColor(JADE);
-				printf("〨");
-				FontUtil_ChangeFontColor(WHITE);
 				break;
-			case LEFT_WALL:
-			case RIGHT_WALL:
-				FontUtil_ChangeFontColor(LIGHT_WHITE);
-				printf("��");
-				FontUtil_ChangeFontColor(WHITE);
-				break;
-			case TOP_WALL:
-			case BOTTOM_WALL:
-				FontUtil_ChangeFontColor(LIGHT_WHITE);
-				printf("〞");
+			case SHADOW_BLOCK:
 				FontUtil_ChangeFontColor(WHITE);
 				break;
 			}
+			printf("%s", boardTypesToPrint[tetrisManager->board[i][j]]);
+			FontUtil_ChangeFontColor(WHITE);
 		}
 		printf("\n");
 	}
@@ -209,31 +209,38 @@ DWORD TetrisManager_GetDownMilliSecond(TetrisManager* tetrisManager){
 	return milliSecond;
 }
 
+void TetrisManager_MakeShadow(TetrisManager* tetrisManager){
+	tetrisManager->shadow = tetrisManager->block;
+	while (!TetrisManager_IsReachedToBottom(tetrisManager, SHADOW_BLOCK)){
+		TetrisManager_ChangeBoardByDirection(tetrisManager, SHADOW_BLOCK, DOWN);
+	}
+}
+
 static void _TetrisManager_PrintStatus(TetrisManager* tetrisManager, int* x, int* y){
 	CursorUtil_GotoXY(*x, (*y)++);
 	printf("旨 Lv 旬  旨 Line 旬  旨 TotalScore 旬");
 	CursorUtil_GotoXY(*x, (*y)++);
 	printf("早%3d 早  早%4d  早  早%7d     早", tetrisManager->speedLevel, tetrisManager->deletedLineCount, tetrisManager->score);
-	CursorUtil_GotoXY(*x, (*y)++); 
+	CursorUtil_GotoXY(*x, (*y)++);
 	printf("曲收收旭  曲收收收旭  曲收收收收收收旭");
 }
 
 static void _TetrisManager_PrintKeys(TetrisManager* tetrisManager, int* x, int* y){
-	CursorUtil_GotoXY(*x, (*y)++); 
+	CursorUtil_GotoXY(*x, (*y)++);
 	printf("旨收收收收 Keys 收收收收旬");
-	CursorUtil_GotoXY(*x, (*y)++); 
+	CursorUtil_GotoXY(*x, (*y)++);
 	printf("早∠       早move left  早");
-	CursorUtil_GotoXY(*x, (*y)++); 
+	CursorUtil_GotoXY(*x, (*y)++);
 	printf("早⊥       早move right 早");
-	CursorUtil_GotoXY(*x, (*y)++); 
+	CursorUtil_GotoXY(*x, (*y)++);
 	printf("早⊿       早move down  早");
-	CursorUtil_GotoXY(*x, (*y)++); 
+	CursorUtil_GotoXY(*x, (*y)++);
 	printf("早∟       早rotate     早");
-	CursorUtil_GotoXY(*x, (*y)++); 
+	CursorUtil_GotoXY(*x, (*y)++);
 	printf("早SpaceBar 早direct down早");
-	CursorUtil_GotoXY(*x, (*y)++); 
+	CursorUtil_GotoXY(*x, (*y)++);
 	printf("早ESC      早pause      早");
-	CursorUtil_GotoXY(*x, (*y)++); 
+	CursorUtil_GotoXY(*x, (*y)++);
 	printf("曲收收收收收收收收收收收旭");
 }
 
@@ -255,17 +262,25 @@ static void _TetrisManager_ClearBoard(TetrisManager* tetrisManager){
 			}
 		}
 	}
+
+	//in order to make center hole at top wall, we convert center top wall into empty intentionally
+	tetrisManager->board[0][(BOARD_COL_SIZE - 2) / 2 - 1] = EMPTY;
+	tetrisManager->board[0][(BOARD_COL_SIZE - 2) / 2] = EMPTY;
+	tetrisManager->board[0][(BOARD_COL_SIZE - 2) / 2 + 1] = EMPTY;
+	tetrisManager->board[0][(BOARD_COL_SIZE - 2) / 2 + 2] = EMPTY;
+
 	tetrisManager->board[0][0] = LEFT_TOP_EDGE;
 	tetrisManager->board[0][BOARD_COL_SIZE - 1] = RIGHT_TOP_EDGE;
 	tetrisManager->board[BOARD_ROW_SIZE - 1][0] = LEFT_BOTTOM_EDGE;
 	tetrisManager->board[BOARD_ROW_SIZE - 1][BOARD_COL_SIZE - 1] = RIGHT_BOTTOM_EDGE;
 }
 
-static void _TetrisManager_ChangeBoardByStatus(TetrisManager* tetrisManager, int status){
+static void _TetrisManager_ChangeBoardByStatus(TetrisManager* tetrisManager, int blockType, int status){
 	int i;
+	Block block = _TetrisManager_GetBlockByType(tetrisManager, blockType);
 	for (i = 0; i < POSITIONS_SIZE; i++){
-		int x = Block_GetPositions(tetrisManager->block)[i].x;
-		int y = Block_GetPositions(tetrisManager->block)[i].y;
+		int x = Block_GetPositions(block)[i].x;
+		int y = Block_GetPositions(block)[i].y;
 		tetrisManager->board[x][y] = status;
 	}
 }
@@ -352,5 +367,14 @@ static void _TetrisManager_HighlightLinesToDelete(TetrisManager* tetrisManager, 
 				printf("  ");
 			}
 		}
+	}
+}
+
+static Block _TetrisManager_GetBlockByType(TetrisManager* tetrisManager, int blockType){
+	if (blockType == SHADOW_BLOCK){
+		return tetrisManager->shadow;
+	}
+	else{ 
+		return tetrisManager->block;
 	}
 }

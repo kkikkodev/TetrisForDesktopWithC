@@ -70,6 +70,9 @@ int main(int argc, char* argv[]){
 								tickCount = GetTickCount();
 								break;
 							}
+							else if (key == L_KEY_CODE){
+								TetrisView_MakeHold(&tetrisView);
+							}
 						}
 					}
 				}

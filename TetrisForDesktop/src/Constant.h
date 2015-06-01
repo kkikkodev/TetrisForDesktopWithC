@@ -16,7 +16,8 @@ enum ProcessType{
 enum KeyCode{
 	UP_KEY_CODE = 72, LEFT_KEY_CODE = 75, 
 	RIGHT_KEY_CODE = 77, DOWN_KEY_CODE = 80, 
-	SPACE_BAR_KEY_CODE = 32, ESC_KEY_CODE = 27
+	SPACE_BAR_KEY_CODE = 32, ESC_KEY_CODE = 27,
+	L_KEY_CODE = 108
 };
 
 enum BoardType{

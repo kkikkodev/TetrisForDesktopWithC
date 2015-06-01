@@ -172,10 +172,6 @@ void TetrisView_ShowSetting(TetrisView* tetrisView){
 	while(getchar() != '\n');
 }
 
-DWORD TetrisView_GetDownMilliSecond(TetrisView* tetrisView){
-	return TetrisManager_GetDownMilliSecond(&tetrisView->tetrisManager);
-}
-
 void TetrisView_ProcessMainMenu(TetrisView* tetrisView){
 	Menu menu = { 0, };
 	char items[MENU_ITEMS_COUNT][MENU_ITEMS_CONTENT_SIZE] = {
@@ -312,4 +308,12 @@ void TetrisView_ProcessEndMenu(TetrisView* tetrisView){
 	tetrisView->endMenu = Menu_ProcessKey(&menu) + 1;
 	tetrisView->mainMenu = 0;
 	tetrisView->pauseMenu = 0;
+}
+
+DWORD TetrisView_GetDownMilliSecond(TetrisView* tetrisView){
+	return TetrisManager_GetDownMilliSecond(&tetrisView->tetrisManager);
+}
+
+void TetrisView_MakeHold(TetrisView* tetrisView){
+	TetrisManager_MakeHold(&tetrisView->tetrisManager);
 }

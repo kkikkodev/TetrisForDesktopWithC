@@ -20,9 +20,10 @@ void TetrisView_EndGame(TetrisView* tetrisView);
 void TetrisView_ShowRanking(TetrisView* tetrisView);
 void TetrisView_AddRanking(TetrisView* tetrisView);
 void TetrisView_ShowSetting(TetrisView* tetrisView);
-DWORD TetrisView_GetDownMilliSecond(TetrisView* tetrisView); //make temporarily for calling from main function
 void TetrisView_ProcessMainMenu(TetrisView* tetrisView);
 void TetrisView_ProcessPauseMenu(TetrisView* tetrisView);
 void TetrisView_ProcessEndMenu(TetrisView* tetrisView);
+DWORD TetrisView_GetDownMilliSecond(TetrisView* tetrisView); //make temporarily for calling from main function
+void TetrisView_MakeHold(TetrisView* tetrisView);
 
 #endif

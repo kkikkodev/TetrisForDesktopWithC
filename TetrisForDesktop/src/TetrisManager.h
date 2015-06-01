@@ -13,6 +13,7 @@ enum GameStatus{
 typedef struct _tetrisManager{
 	char board[BOARD_ROW_SIZE][BOARD_COL_SIZE];
 	Block block;
+	int isHoldAvailable; // if hold block is empty or hold turn is passed, this variable is true
 	Block shadow;
 	int deletedLineCount;
 	int speedLevel;
@@ -31,5 +32,6 @@ void TetrisManager_Sleep(TetrisManager* tetrisManager);
 void TetrisManager_Print(TetrisManager* tetrisManager);
 DWORD TetrisManager_GetDownMilliSecond(TetrisManager* tetrisManager);
 void TetrisManager_MakeShadow(TetrisManager* tetrisManager);
+void TetrisManager_MakeHold(TetrisManager* tetrisManager);
 
 #endif

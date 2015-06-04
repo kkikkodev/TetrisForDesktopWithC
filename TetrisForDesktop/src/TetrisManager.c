@@ -5,7 +5,7 @@
 #include "Util.h"
 #include "Constant.h"
 
-#define INITAL_SPEED 300
+#define INITIAL_SPEED 300
 #define SPEED_LEVEL_OFFSET 40
 #define LEVELP_UP_CONDITION 3
 #define STATUS_POSITION_X_TO_PRINT 43
@@ -204,7 +204,7 @@ void TetrisManager_Print(TetrisManager* tetrisManager){
 
 DWORD TetrisManager_GetDownMilliSecond(TetrisManager* tetrisManager){
 	int i;
-	DWORD milliSecond = INITAL_SPEED;
+	DWORD milliSecond = INITIAL_SPEED;
 	for (i = MIN_SPEED_LEVEL; i < tetrisManager->speedLevel; i++){
 		if (i < MAX_SPEED_LEVEL / 2){
 			milliSecond -= SPEED_LEVEL_OFFSET;

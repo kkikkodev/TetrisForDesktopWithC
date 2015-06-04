@@ -69,6 +69,7 @@ static Block _Block_MoveToDown(Block block);
 static Block _Block_MoveToLeft(Block block);
 static Block _Block_MoveToRight(Block block);
 static Block _Block_RotateRight(Block block);
+static void _Block_PrintDefaultBlock(int blockNumber, int x, int* y);
 
 Block Block_Make(int isFirst, Block block){
 	int i;
@@ -76,6 +77,7 @@ Block Block_Make(int isFirst, Block block){
 	srand((unsigned int)time(NULL));
 	if (isFirst){
 		block.current = rand() % BLOCK_EXAMPLES_SIZE;
+		block.hold = -1;
 	}
 	else{
 		block.current = block.next;
@@ -85,7 +87,9 @@ Block Block_Make(int isFirst, Block block){
 			block.positions[i][j] = blockExamples[block.current][i][j];
 		}
 	}
-	block.next = rand() % BLOCK_EXAMPLES_SIZE;
+	do{
+		block.next = rand() % BLOCK_EXAMPLES_SIZE;
+	} while (block.current == block.next);
 	block.direction = UP;
 	block.color = rand() % (FONT_COLOR_SIZE - 2) + 2;
 	return block;
@@ -109,49 +113,42 @@ Point* Block_GetPositions(Block block){
 	return block.positions[block.direction];
 }
 
-void Block_PrintNext(Block block, int x, int y){
+int Block_IsHoldSet(Block block){
+	return block.hold != -1;
+}
 
+void Block_ChangeCurrentForHold(Block* block){
+	int i;
+	int j;
+	int temp = block->current;
+	block->current = block->hold;
+	block->hold = temp;
+	if (block->current != -1){
+		for (i = 0; i < POSITIONS_SIZE; i++){
+			for (j = 0; j < POSITIONS_SIZE; j++){
+				block->positions[i][j] = blockExamples[block->current][i][j];
+			}
+		}
+	}
+	else{
+		*block = Block_Make(False, *block);
+	}
+}
+
+void Block_PrintNext(Block block, int x, int y){
 	CursorUtil_GotoXY(x, y++);
 	printf("旨收 Next Block 收旬");
 	CursorUtil_GotoXY(x, y++);
+	_Block_PrintDefaultBlock(block.next, x, &y);
+	CursorUtil_GotoXY(x, y++);
+	printf("曲收收收收收收收收旭");
+}
 
-	switch (block.next){
-	case 0:
-		printf("早    ﹥﹥﹥﹥    早");
-		CursorUtil_GotoXY(x, y++);
-		printf("早                早");
-		break;
-	case 1:
-		printf("早          ﹥    早");
-		CursorUtil_GotoXY(x, y++);
-		printf("早      ﹥﹥﹥    早");
-		break;
-	case 2:
-		printf("早       ﹥﹥     早");
-		CursorUtil_GotoXY(x, y++);
-		printf("早     ﹥﹥       早");
-		break;
-	case 3:
-		printf("早     ﹥﹥       早");
-		CursorUtil_GotoXY(x, y++);
-		printf("早       ﹥﹥     早");
-		break;
-	case 4:
-		printf("早       ﹥       早");
-		CursorUtil_GotoXY(x, y++);
-		printf("早     ﹥﹥﹥     早");
-		break;
-	case 5:
-		printf("早     ﹥         早");
-		CursorUtil_GotoXY(x, y++);
-		printf("早     ﹥﹥﹥     早");
-		break;
-	case 6:
-		printf("早      ﹥﹥      早");
-		CursorUtil_GotoXY(x, y++);
-		printf("早      ﹥﹥      早");
-		break;
-	}
+void Block_PrintHold(Block block, int x, int y){
+	CursorUtil_GotoXY(x, y++);
+	printf("旨收 Hold Block 收旬");
+	CursorUtil_GotoXY(x, y++);
+	_Block_PrintDefaultBlock(block.hold, x, &y);
 	CursorUtil_GotoXY(x, y++);
 	printf("曲收收收收收收收收旭");
 }
@@ -192,4 +189,49 @@ static Block _Block_MoveToRight(Block block){
 static Block _Block_RotateRight(Block block){
 	block.direction = (block.direction + 1) % POSITIONS_SIZE;
 	return block;
+}
+
+static void _Block_PrintDefaultBlock(int blockNumber, int x, int* y){
+	switch (blockNumber){
+	case -1:
+		printf("早                早");
+		CursorUtil_GotoXY(x, (*y)++);
+		printf("早                早");
+		break;
+	case 0:
+		printf("早    ﹥﹥﹥﹥    早");
+		CursorUtil_GotoXY(x, (*y)++);
+		printf("早                早");
+		break;
+	case 1:
+		printf("早          ﹥    早");
+		CursorUtil_GotoXY(x, (*y)++);
+		printf("早      ﹥﹥﹥    早");
+		break;
+	case 2:
+		printf("早       ﹥﹥     早");
+		CursorUtil_GotoXY(x, (*y)++);
+		printf("早     ﹥﹥       早");
+		break;
+	case 3:
+		printf("早     ﹥﹥       早");
+		CursorUtil_GotoXY(x, (*y)++);
+		printf("早       ﹥﹥     早");
+		break;
+	case 4:
+		printf("早       ﹥       早");
+		CursorUtil_GotoXY(x, (*y)++);
+		printf("早     ﹥﹥﹥     早");
+		break;
+	case 5:
+		printf("早     ﹥         早");
+		CursorUtil_GotoXY(x, (*y)++);
+		printf("早     ﹥﹥﹥     早");
+		break;
+	case 6:
+		printf("早      ﹥﹥      早");
+		CursorUtil_GotoXY(x, (*y)++);
+		printf("早      ﹥﹥      早");
+		break;
+	}
 }

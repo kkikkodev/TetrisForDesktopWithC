@@ -36,15 +36,17 @@ void TetrisView_ProcessGame(TetrisView* tetrisView, int processType, int directi
 	//it is used to move left or right at bottom in case of space which you want to move is available
 	static int processReachedCaseCount = 0;
 	if (processType == DIRECTION){
-		TetrisManager_ChangeBoardByDirection(&tetrisView->tetrisManager, direction);
+		TetrisManager_ChangeBoardByDirection(&tetrisView->tetrisManager, MOVING_BLOCK, direction);
+		TetrisManager_MakeShadow(&tetrisView->tetrisManager);
 	}
 	else if (processType == DIRECT_DOWN){
 		TetrisManager_ProcessDirectDown(&tetrisView->tetrisManager);
 	}
 	else if (processType == AUTO){
 		TetrisManager_ChangeBoardByAuto(&tetrisView->tetrisManager);
+		TetrisManager_MakeShadow(&tetrisView->tetrisManager);
 	}
-	if (TetrisManager_IsReachedToBottom(&tetrisView->tetrisManager)){
+	if (TetrisManager_IsReachedToBottom(&tetrisView->tetrisManager, MOVING_BLOCK)){
 		if (processType == DIRECT_DOWN){
 			processReachedCaseCount = 0;
 			if (TetrisManager_ProcessReachedCase(&tetrisView->tetrisManager) == END){
@@ -66,8 +68,8 @@ void TetrisView_ProcessGame(TetrisView* tetrisView, int processType, int directi
 			}
 		}
 	}
-	TetrisManager_Print(&tetrisView->tetrisManager);
 	TetrisManager_ProcessDeletingLines(&tetrisView->tetrisManager);
+	TetrisManager_Print(&tetrisView->tetrisManager);
 }
 
 void TetrisView_PauseGame(TetrisView* tetrisView){
@@ -168,10 +170,6 @@ void TetrisView_ShowSetting(TetrisView* tetrisView){
 		tetrisView->level = MIN_SPEED_LEVEL;
 	}
 	while(getchar() != '\n');
-}
-
-DWORD TetrisView_GetDownMilliSecond(TetrisView* tetrisView){
-	return TetrisManager_GetDownMilliSecond(&tetrisView->tetrisManager);
 }
 
 void TetrisView_ProcessMainMenu(TetrisView* tetrisView){
@@ -310,4 +308,12 @@ void TetrisView_ProcessEndMenu(TetrisView* tetrisView){
 	tetrisView->endMenu = Menu_ProcessKey(&menu) + 1;
 	tetrisView->mainMenu = 0;
 	tetrisView->pauseMenu = 0;
+}
+
+DWORD TetrisView_GetDownMilliSecond(TetrisView* tetrisView){
+	return TetrisManager_GetDownMilliSecond(&tetrisView->tetrisManager);
+}
+
+void TetrisView_MakeHold(TetrisView* tetrisView){
+	TetrisManager_MakeHold(&tetrisView->tetrisManager);
 }

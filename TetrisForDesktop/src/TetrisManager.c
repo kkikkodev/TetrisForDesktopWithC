@@ -53,7 +53,7 @@ int TetrisManager_CheckValidPosition(TetrisManager* tetrisManager, int blockType
 		//but now, x == 0 is empty
 		//originally, x == 0 is top wall
 		//because we convert the center top wall into empty intentionally
-		if (x == 0){
+		if (blockType == MOVING_BLOCK && x == 0){
 			return TOP_WALL;
 		}
 		int y = Block_GetPositions(temp)[i].y;
@@ -78,7 +78,7 @@ void TetrisManager_ChangeBoardByDirection(TetrisManager* tetrisManager, int bloc
 		}
 	}
 	else{
-		if (direction == UP && checkResult != FIXED_BLOCK){
+		if ((direction == UP || direction == LEFT || direction == RIGHT) && checkResult != FIXED_BLOCK){
 			if (checkResult == TOP_WALL){
 				tempDirection = DOWN;
 				tempCheckResult = TOP_WALL;

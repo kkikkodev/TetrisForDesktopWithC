@@ -24,3 +24,11 @@ tetris for desktop (OS : windows / IDE : visual studio 2013)
 - 굳어지기 직전 이동 가능할 시 이동 가능하게 하기
 - 메뉴바 UI 적용
 - 회전 버그 수정
+
+[ver 0.5 : https://youtu.be/N7QJpGmXzqg]
+- 점수 추가
+- 랭킹 메뉴 추가
+- 설정 메뉴 추가
+- 그림자 기능 추가
+- 홀드 기능 추가
+- 다음 블럭 2 개로 변경

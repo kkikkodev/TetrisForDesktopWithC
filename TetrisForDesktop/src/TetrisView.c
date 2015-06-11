@@ -50,8 +50,8 @@ void TetrisView_ProcessGame(TetrisView* tetrisView, int processType, int directi
 		if (processType == DIRECT_DOWN){
 			processReachedCaseCount = 0;
 			if (TetrisManager_ProcessReachedCase(&tetrisView->tetrisManager) == END){
-					TetrisView_EndGame(tetrisView);
-					return;
+				TetrisView_EndGame(tetrisView);
+				return;
 			}
 		}
 		else{
@@ -101,7 +101,7 @@ void TetrisView_AddRanking(TetrisView* tetrisView){
 	int x = ADD_ID_POSITION_X_TO_PRINT;
 	int y = ADD_ID_POSITION_Y_TO_PRINT;
 	int i;
-	char id[ID_SIZE + 1] = {'\0', };
+	char id[ID_SIZE + 1] = { '\0', };
 	system("cls");
 	CursorUtil_GotoXY(x, y++);
 	printf("旨收收收收收收收收收收收收收旬");
@@ -158,7 +158,7 @@ void TetrisView_ShowSetting(TetrisView* tetrisView){
 	CursorUtil_GotoXY(x, y++);
 	scanf("%d", &tetrisView->level);
 	if (tetrisView->level >= MIN_SPEED_LEVEL && tetrisView->level <= MAX_SPEED_LEVEL){
-		
+
 	}
 	else if (tetrisView->level < MIN_SPEED_LEVEL){
 		tetrisView->level = MIN_SPEED_LEVEL;
@@ -169,7 +169,7 @@ void TetrisView_ShowSetting(TetrisView* tetrisView){
 	else{
 		tetrisView->level = MIN_SPEED_LEVEL;
 	}
-	while(getchar() != '\n');
+	while (getchar() != '\n');
 }
 
 void TetrisView_ProcessMainMenu(TetrisView* tetrisView){

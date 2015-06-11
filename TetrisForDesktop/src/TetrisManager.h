@@ -20,7 +20,7 @@ typedef struct _tetrisManager{
 	int score;
 }TetrisManager;
 
-void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel); 
+void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel);
 int TetrisManager_CheckValidPosition(TetrisManager* tetrisManager, int blockType, int direction);
 void TetrisManager_ChangeBoardByDirection(TetrisManager* tetrisManager, int blockType, int direction);
 void TetrisManager_ChangeBoardByAuto(TetrisManager* tetrisManager);

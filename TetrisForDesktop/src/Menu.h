@@ -1,5 +1,6 @@
 #ifndef _MENU_H
 #define _MENU_H
+
 #include "Point.h"
 
 #define MENU_ITEMS_COUNT 20

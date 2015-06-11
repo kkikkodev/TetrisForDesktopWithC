@@ -9,7 +9,7 @@
 #define SPEED_LEVEL_OFFSET 40
 #define LEVELP_UP_CONDITION 3
 #define STATUS_POSITION_X_TO_PRINT 38
-#define STATUS_POSITION_Y_TO_PRINT 3
+#define STATUS_POSITION_Y_TO_PRINT 1
 
 #define LINES_TO_DELETE_HIGHTING_COUNT 3
 #define LINES_TO_DELETE_HIGHTING_MILLISECOND 100
@@ -145,6 +145,7 @@ int TetrisManager_ProcessReachedCase(TetrisManager* tetrisManager){
 	TetrisManager_MakeShadow(tetrisManager);
 	tetrisManager->isHoldAvailable = True;
 	if (TetrisManager_IsReachedToBottom(tetrisManager, MOVING_BLOCK)){
+		Block_Destroy(tetrisManager->block);
 		return END;
 	}
 	else{
@@ -189,12 +190,14 @@ void TetrisManager_Print(TetrisManager* tetrisManager){
 	y = STATUS_POSITION_Y_TO_PRINT;
 	_TetrisManager_PrintStatus(tetrisManager, &x, &y);
 	x += 6;
-	y += 2;
+	y += 1;
 	_TetrisManager_PrintKeys(tetrisManager, &x, &y);
-	x -= 6;
-	y += 2;
-	Block_PrintNext(tetrisManager->block, x, y);
+	x -= 4;
+	y += 1;
+	Block_PrintNext(tetrisManager->block, 0, x, y);
 	x += 20;
+	Block_PrintNext(tetrisManager->block, 1, x, y);
+	y += 5;
 	Block_PrintHold(tetrisManager->block, x, y);
 	CursorUtil_Hide();
 }

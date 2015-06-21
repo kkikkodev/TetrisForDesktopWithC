@@ -20,7 +20,6 @@ void Block_Destroy(Block block);
 Block Block_Move(Block block, int direction);
 Point* Block_GetPositions(Block block);
 void Block_ChangeCurrentForHold(Block* block);
-int Block_IsHoldSet(Block block);
 void Block_PrintNext(Block block, int index, int x, int y);
 void Block_PrintHold(Block block, int x, int y);
 

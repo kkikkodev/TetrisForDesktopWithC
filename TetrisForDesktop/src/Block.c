@@ -129,10 +129,6 @@ Point* Block_GetPositions(Block block){
 	return block.positions[block.direction];
 }
 
-int Block_IsHoldSet(Block block){
-	return block.hold != -1;
-}
-
 void Block_ChangeCurrentForHold(Block* block){
 	int i;
 	int j;
@@ -153,6 +149,7 @@ void Block_ChangeCurrentForHold(Block* block){
 
 void Block_PrintNext(Block block, int index, int x, int y){
 	int next;
+	ScreenUtil_ClearRectangle(x + 2, y + 1, 12, 2); // use temp size (magic number)
 	CursorUtil_GotoXY(x, y++);
 	printf("旨收 Next %d 收旬", index + 1);
 	CursorUtil_GotoXY(x, y++);
@@ -163,6 +160,7 @@ void Block_PrintNext(Block block, int index, int x, int y){
 }
 
 void Block_PrintHold(Block block, int x, int y){
+	ScreenUtil_ClearRectangle(x + 2, y + 1, 12, 2); // use temp size (magic number)
 	CursorUtil_GotoXY(x, y++);
 	printf("旨收  Hold  收旬");
 	CursorUtil_GotoXY(x, y++);

@@ -28,7 +28,9 @@ void TetrisView_StartGame(TetrisView* tetrisView){
 	}
 	TetrisManager_Init(&tetrisView->tetrisManager, tetrisView->level);
 	system("cls");
-	TetrisManager_Print(&tetrisView->tetrisManager);
+	FontUtil_ChangeFontColor(DEFAULT_FONT_COLOR);
+	TetrisManager_PrintBoard(&tetrisView->tetrisManager);
+	TetrisManager_PrintDetailInfomation(&tetrisView->tetrisManager);
 }
 
 void TetrisView_ProcessGame(TetrisView* tetrisView, int processType, int direction){
@@ -36,15 +38,13 @@ void TetrisView_ProcessGame(TetrisView* tetrisView, int processType, int directi
 	//it is used to move left or right at bottom in case of space which you want to move is available
 	static int processReachedCaseCount = 0;
 	if (processType == DIRECTION){
-		TetrisManager_ChangeBoardByDirection(&tetrisView->tetrisManager, MOVING_BLOCK, direction);
-		TetrisManager_MakeShadow(&tetrisView->tetrisManager);
+		TetrisManager_ProcessDirection(&tetrisView->tetrisManager, direction);
 	}
 	else if (processType == DIRECT_DOWN){
 		TetrisManager_ProcessDirectDown(&tetrisView->tetrisManager);
 	}
 	else if (processType == AUTO){
-		TetrisManager_ChangeBoardByAuto(&tetrisView->tetrisManager);
-		TetrisManager_MakeShadow(&tetrisView->tetrisManager);
+		TetrisManager_ProcessAuto(&tetrisView->tetrisManager);
 	}
 	if (TetrisManager_IsReachedToBottom(&tetrisView->tetrisManager, MOVING_BLOCK)){
 		if (processType == DIRECT_DOWN){
@@ -69,14 +69,13 @@ void TetrisView_ProcessGame(TetrisView* tetrisView, int processType, int directi
 		}
 	}
 	TetrisManager_ProcessDeletingLines(&tetrisView->tetrisManager);
-	TetrisManager_Print(&tetrisView->tetrisManager);
 }
 
 void TetrisView_PauseGame(TetrisView* tetrisView){
 	PlaySound(NULL, 0, 0);
 	FontUtil_ChangeFontColor(LIGHT_YELLOW);
 	TetrisView_ProcessPauseMenu(tetrisView);
-	FontUtil_ChangeFontColor(WHITE);
+	FontUtil_ChangeFontColor(DEFAULT_FONT_COLOR);
 	switch (tetrisView->pauseMenu){
 	case RESUME_PAUSE_MENU:
 		PlaySound(TEXT(TETRIS_BACKGROUND_MUSIC_FILE_NAME), NULL, SND_ASYNC | SND_LOOP);
@@ -114,7 +113,9 @@ void TetrisView_AddRanking(TetrisView* tetrisView){
 	x += 4;
 	y -= 2;
 	CursorUtil_GotoXY(x, y++);
+	CursorUtil_Show();
 	fgets(id, ID_SIZE + 1, stdin);
+	CursorUtil_Hide();
 	for (i = ID_SIZE; i >= 0; i--){
 		if (id[i] == '\n'){
 			id[i] = '\0';
@@ -156,7 +157,9 @@ void TetrisView_ShowSetting(TetrisView* tetrisView){
 	x += 4;
 	y -= 2;
 	CursorUtil_GotoXY(x, y++);
+	CursorUtil_Show();
 	scanf("%d", &tetrisView->level);
+	CursorUtil_Hide();
 	if (tetrisView->level >= MIN_SPEED_LEVEL && tetrisView->level <= MAX_SPEED_LEVEL){
 
 	}
@@ -260,7 +263,7 @@ void TetrisView_ProcessMainMenu(TetrisView* tetrisView){
 	printf(" бсбс");
 	x -= 22;
 	y += 2;
-	Menu_Create(&menu, items, menuCount, x, y);
+	Menu_Create(&menu, items, menuCount, x, y, DEFAULT_FONT_COLOR);
 	Menu_Print(&menu);
 	tetrisView->mainMenu = Menu_ProcessKey(&menu) + 1;
 	tetrisView->pauseMenu = 0;
@@ -275,11 +278,14 @@ void TetrisView_ProcessPauseMenu(TetrisView* tetrisView){
 	int menuCount = 2;
 	int x = PAUSE_MENU_X;
 	int y = PAUSE_MENU_Y;
-	Menu_Create(&menu, items, menuCount, x, y);
+	Menu_Create(&menu, items, menuCount, x, y, LIGHT_YELLOW);
 	Menu_Print(&menu);
 	tetrisView->pauseMenu = Menu_ProcessKey(&menu) + 1;
 	tetrisView->mainMenu = 0;
 	tetrisView->endMenu = 0;
+	if (tetrisView->pauseMenu == RESUME_PAUSE_MENU){
+		TetrisManager_PrintBoard(&tetrisView->tetrisManager);
+	}
 }
 
 void TetrisView_ProcessEndMenu(TetrisView* tetrisView){
@@ -303,7 +309,7 @@ void TetrisView_ProcessEndMenu(TetrisView* tetrisView){
 	printf("  бс    бсбсбс    бс");
 	x += 2;
 	y += 2;
-	Menu_Create(&menu, items, menuCount, x, y);
+	Menu_Create(&menu, items, menuCount, x, y, DEFAULT_FONT_COLOR);
 	Menu_Print(&menu);
 	tetrisView->endMenu = Menu_ProcessKey(&menu) + 1;
 	tetrisView->mainMenu = 0;

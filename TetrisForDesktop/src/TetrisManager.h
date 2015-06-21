@@ -21,17 +21,16 @@ typedef struct _tetrisManager{
 }TetrisManager;
 
 void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel);
-int TetrisManager_CheckValidPosition(TetrisManager* tetrisManager, int blockType, int direction);
-void TetrisManager_ChangeBoardByDirection(TetrisManager* tetrisManager, int blockType, int direction);
-void TetrisManager_ChangeBoardByAuto(TetrisManager* tetrisManager);
+void TetrisManager_ProcessDirection(TetrisManager* tetrisManager, int direction);
+void TetrisManager_ProcessAuto(TetrisManager* tetrisManager);
 void TetrisManager_ProcessDirectDown(TetrisManager* tetrisManager);
 void TetrisManager_ProcessDeletingLines(TetrisManager* tetrisManager);
 int TetrisManager_IsReachedToBottom(TetrisManager* tetrisManager, int blockType);
 int TetrisManager_ProcessReachedCase(TetrisManager* tetrisManager);
-void TetrisManager_Sleep(TetrisManager* tetrisManager);
 void TetrisManager_Print(TetrisManager* tetrisManager);
+void TetrisManager_PrintBoard(TetrisManager* tetrisManager);
+void TetrisManager_PrintDetailInfomation(TetrisManager* tetrisManager);
 DWORD TetrisManager_GetDownMilliSecond(TetrisManager* tetrisManager);
-void TetrisManager_MakeShadow(TetrisManager* tetrisManager);
 void TetrisManager_MakeHold(TetrisManager* tetrisManager);
 
 #endif

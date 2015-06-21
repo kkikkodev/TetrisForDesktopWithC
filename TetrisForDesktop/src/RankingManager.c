@@ -10,6 +10,8 @@
 #define RANKING_POSITION_X_TO_PRINT 5
 #define RANKING_POSITION_Y_TO_PRINT 5
 
+#define TIMESTAMP_FOR_PRINT_SIZE 100
+
 #define RANKING_FILE ".\\..\\res\\tetrisRanking.dat"
 
 static int _RankingManager_GetLength(RankingManager* rankingManager);
@@ -71,7 +73,7 @@ int RankingManager_Save(RankingManager* rankingManager){
 
 void RankingManager_Print(RankingManager* rankingManager){
 	int i;
-	char timestampForPrint[100];
+	char timestampForPrint[TIMESTAMP_FOR_PRINT_SIZE];
 	struct tm* pTm;
 	int x = RANKING_POSITION_X_TO_PRINT;
 	int y = RANKING_POSITION_Y_TO_PRINT;

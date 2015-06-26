@@ -207,7 +207,9 @@ void TetrisManager_MakeHold(TetrisManager* tetrisManager){
 
 	if (tetrisManager->isHoldAvailable){
 		_TetrisManager_PrintBlock(tetrisManager, MOVING_BLOCK, EMPTY);
+		_TetrisManager_ChangeBoardByStatus(tetrisManager, MOVING_BLOCK, EMPTY);
 		_TetrisManager_PrintBlock(tetrisManager, SHADOW_BLOCK, EMPTY);
+		_TetrisManager_ChangeBoardByStatus(tetrisManager, SHADOW_BLOCK, EMPTY);
 		Block_ChangeCurrentForHold(&tetrisManager->block);
 		tetrisManager->isHoldAvailable = False;
 		Block_PrintHold(tetrisManager->block, x, y);

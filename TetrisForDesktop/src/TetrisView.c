@@ -18,7 +18,7 @@
 #define SETTING_POSITION_Y_TO_PRINT 10
 
 enum MenuStartPosition{
-	MAIN_MENU_X = 18, MAIN_MENU_Y = 7, PAUSE_MENU_X = 5, PAUSE_MENU_Y = 12, END_MENU_X = 28, END_MENU_Y = 8
+	MAIN_MENU_X = 18, MAIN_MENU_Y = 7, PAUSE_MENU_X = 5, PAUSE_MENU_Y = 12, END_MENU_X = 14, END_MENU_Y = 8
 };
 
 void TetrisView_StartGame(TetrisView* tetrisView){
@@ -298,16 +298,16 @@ void TetrisView_ProcessEndMenu(TetrisView* tetrisView){
 	int y = END_MENU_Y;
 	system("cls");
 	CursorUtil_GotoXY(x, y++);
-	printf("бсбсбс          бсбсбс");
+	printf("бсбсбс  бс  бс  бсбсбс          бсбсбс  бс  бс  бсбс");          
 	CursorUtil_GotoXY(x, y++);
-	printf("  бс              бс");
+	printf("  бс    бс  бс  бс              бс       бс бс  бс бс");
 	CursorUtil_GotoXY(x, y++);
-	printf("  бс              бс");
+	printf("  бс    бсбсбс  бсбсбс  бсбсбс  бсбсбс  бсбсбс  бс  бс");
 	CursorUtil_GotoXY(x, y++);
-	printf("  бс              бс");
+	printf("  бс    бс  бс  бс              бс      бс бс   бс бс");
 	CursorUtil_GotoXY(x, y++);
-	printf("  бс    бсбсбс    бс");
-	x += 2;
+	printf("  бс    бс  бс  бсбсбс          бсбсбс  бс  бс  бсбс");
+	x += 19;
 	y += 2;
 	Menu_Create(&menu, items, menuCount, x, y, DEFAULT_FONT_COLOR);
 	Menu_Print(&menu);

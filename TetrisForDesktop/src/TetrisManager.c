@@ -58,7 +58,6 @@ void TetrisManager_ProcessDirection(TetrisManager* tetrisManager, int direction)
 	_TetrisManager_PrintBlock(tetrisManager, MOVING_BLOCK, MOVING_BLOCK);
 	if (direction != DOWN){
 		_TetrisManager_MakeShadow(tetrisManager);
-		_TetrisManager_PrintBlock(tetrisManager, SHADOW_BLOCK, SHADOW_BLOCK);
 	}
 }
 
@@ -125,7 +124,6 @@ int TetrisManager_ProcessReachedCase(TetrisManager* tetrisManager){
 	tetrisManager->block = Block_Make(False, tetrisManager->block);
 	_TetrisManager_PrintBlock(tetrisManager, MOVING_BLOCK, MOVING_BLOCK);
 	_TetrisManager_MakeShadow(tetrisManager);
-	_TetrisManager_PrintBlock(tetrisManager, SHADOW_BLOCK, SHADOW_BLOCK);
 	Block_PrintNext(tetrisManager->block, 0, x, y);
 	x += 20;
 	Block_PrintNext(tetrisManager->block, 1, x, y);
@@ -215,7 +213,6 @@ void TetrisManager_MakeHold(TetrisManager* tetrisManager){
 		Block_PrintHold(tetrisManager->block, x, y);
 		_TetrisManager_PrintBlock(tetrisManager, MOVING_BLOCK, MOVING_BLOCK);
 		_TetrisManager_MakeShadow(tetrisManager);
-		_TetrisManager_PrintBlock(tetrisManager, SHADOW_BLOCK, SHADOW_BLOCK);
 	}
 }
 

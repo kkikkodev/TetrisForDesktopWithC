@@ -141,6 +141,7 @@ void Block_ChangeCurrentForHold(Block* block){
 				block->positions[i][j] = blockExamples[block->current][i][j];
 			}
 		}
+		block->direction = UP;
 	}
 	else{
 		*block = Block_Make(False, *block);

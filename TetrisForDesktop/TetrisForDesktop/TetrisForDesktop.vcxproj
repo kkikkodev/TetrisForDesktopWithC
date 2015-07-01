@@ -82,6 +82,7 @@
     <ClCompile Include="..\src\Block.c" />
     <ClCompile Include="..\src\main.c" />
     <ClCompile Include="..\src\Menu.c" />
+    <ClCompile Include="..\src\Queue.c" />
     <ClCompile Include="..\src\RankingManager.c" />
     <ClCompile Include="..\src\TetrisManager.c" />
     <ClCompile Include="..\src\TetrisView.c" />
@@ -93,6 +94,7 @@
     <ClInclude Include="..\src\Constant.h" />
     <ClInclude Include="..\src\Menu.h" />
     <ClInclude Include="..\src\Point.h" />
+    <ClInclude Include="..\src\Queue.h" />
     <ClInclude Include="..\src\RankingManager.h" />
     <ClInclude Include="..\src\TetrisManager.h" />
     <ClInclude Include="..\src\TetrisView.h" />

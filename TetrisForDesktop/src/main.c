@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <conio.h>
 #include <windows.h>
-#include <time.h>
 #include "Constant.h"
 #include "TetrisView.h"
 
@@ -37,18 +36,18 @@ int main(int argc, char* argv[]){
 								direction = UP;
 								break;
 							}
-							else if (key == DOWN_KEY_CODE){
+							if (key == DOWN_KEY_CODE){
 								processType = DIRECTION;
 								direction = DOWN;
 								tickCount = GetTickCount();
 								break;
 							}
-							else if (key == LEFT_KEY_CODE){
+							if (key == LEFT_KEY_CODE){
 								processType = DIRECTION;
 								direction = LEFT;
 								break;
 							}
-							else if (key == RIGHT_KEY_CODE){
+							if (key == RIGHT_KEY_CODE){
 								processType = DIRECTION;
 								direction = RIGHT;
 								break;
@@ -60,7 +59,7 @@ int main(int argc, char* argv[]){
 								tickCount = GetTickCount();
 								break;
 							}
-							else if (key == ESC_KEY_CODE){
+							if (key == ESC_KEY_CODE){
 								TetrisView_PauseGame(&tetrisView);
 								if (tetrisView.pauseMenu == MAIN_MENU_PAUSE_MENU){
 									isSetMainMenu = True;
@@ -70,7 +69,7 @@ int main(int argc, char* argv[]){
 								tickCount = GetTickCount();
 								break;
 							}
-							else if (key == L_KEY_CODE){
+							if (key == L_KEY_CODE){
 								TetrisView_MakeHold(&tetrisView);
 							}
 						}

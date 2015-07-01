@@ -23,7 +23,9 @@ void TetrisView_ShowSetting(TetrisView* tetrisView);
 void TetrisView_ProcessMainMenu(TetrisView* tetrisView);
 void TetrisView_ProcessPauseMenu(TetrisView* tetrisView);
 void TetrisView_ProcessEndMenu(TetrisView* tetrisView);
-DWORD TetrisView_GetDownMilliSecond(TetrisView* tetrisView); //make temporarily for calling from main function
+
+//make temporarily for calling from main function
+DWORD TetrisView_GetDownMilliSecond(TetrisView* tetrisView);
 void TetrisView_MakeHold(TetrisView* tetrisView);
 
 #endif

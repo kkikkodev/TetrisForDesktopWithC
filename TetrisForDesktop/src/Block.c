@@ -5,6 +5,7 @@
 #include "Util.h"
 #include "Constant.h"
 
+#define NEXT_QUEUE_SIZE 2
 #define BLOCK_EXAMPLES_SIZE 7
 
 const static Point blockExamples[BLOCK_EXAMPLES_SIZE][POSITIONS_SIZE][POSITIONS_SIZE] = {
@@ -74,25 +75,40 @@ static void _Block_PrintDefaultBlock(int blockNumber, int x, int* y);
 Block Block_Make(int isFirst, Block block){
 	int i;
 	int j;
+	int next1;
+	int next2;
 	srand((unsigned int)time(NULL));
 	if (isFirst){
 		block.current = rand() % BLOCK_EXAMPLES_SIZE;
 		block.hold = -1;
 	}
 	else{
-		block.current = block.next;
+		Queue_Get(&block.next, &block.current, sizeof(int));
 	}
 	for (i = 0; i < POSITIONS_SIZE; i++){
 		for (j = 0; j < POSITIONS_SIZE; j++){
 			block.positions[i][j] = blockExamples[block.current][i][j];
 		}
 	}
+	if (isFirst){
+		Queue_Create(&block.next, NEXT_QUEUE_SIZE, sizeof(int));
+		do{
+			next1 = rand() % BLOCK_EXAMPLES_SIZE;
+		} while (block.current == next1);
+		Queue_Put(&block.next, &next1, sizeof(int));
+	}
+	Queue_At(&block.next, &next1, 0, sizeof(int));
 	do{
-		block.next = rand() % BLOCK_EXAMPLES_SIZE;
-	} while (block.current == block.next);
+		next2 = rand() % BLOCK_EXAMPLES_SIZE;
+	} while (block.current == next2 || next1 == next2);
+	Queue_Put(&block.next, &next2, sizeof(int));
 	block.direction = UP;
 	block.color = rand() % (FONT_COLOR_SIZE - 2) + 2;
 	return block;
+}
+
+void Block_Destroy(Block block){
+	Queue_Destroy(&block.next);
 }
 
 Block Block_Move(Block block, int direction){
@@ -113,10 +129,6 @@ Point* Block_GetPositions(Block block){
 	return block.positions[block.direction];
 }
 
-int Block_IsHoldSet(Block block){
-	return block.hold != -1;
-}
-
 void Block_ChangeCurrentForHold(Block* block){
 	int i;
 	int j;
@@ -129,28 +141,33 @@ void Block_ChangeCurrentForHold(Block* block){
 				block->positions[i][j] = blockExamples[block->current][i][j];
 			}
 		}
+		block->direction = UP;
 	}
 	else{
 		*block = Block_Make(False, *block);
 	}
 }
 
-void Block_PrintNext(Block block, int x, int y){
+void Block_PrintNext(Block block, int index, int x, int y){
+	int next;
+	ScreenUtil_ClearRectangle(x + 2, y + 1, 12, 2); // use temp size (magic number)
 	CursorUtil_GotoXY(x, y++);
-	printf("旨收 Next Block 收旬");
+	printf("旨收 Next %d 收旬", index + 1);
 	CursorUtil_GotoXY(x, y++);
-	_Block_PrintDefaultBlock(block.next, x, &y);
+	Queue_At(&block.next, &next, index, sizeof(int));
+	_Block_PrintDefaultBlock(next, x, &y);
 	CursorUtil_GotoXY(x, y++);
-	printf("曲收收收收收收收收旭");
+	printf("曲收收收收收收旭");
 }
 
 void Block_PrintHold(Block block, int x, int y){
+	ScreenUtil_ClearRectangle(x + 2, y + 1, 12, 2); // use temp size (magic number)
 	CursorUtil_GotoXY(x, y++);
-	printf("旨收 Hold Block 收旬");
+	printf("旨收  Hold  收旬");
 	CursorUtil_GotoXY(x, y++);
 	_Block_PrintDefaultBlock(block.hold, x, &y);
 	CursorUtil_GotoXY(x, y++);
-	printf("曲收收收收收收收收旭");
+	printf("曲收收收收收收旭");
 }
 
 static Block _Block_MoveToDown(Block block){
@@ -194,44 +211,44 @@ static Block _Block_RotateRight(Block block){
 static void _Block_PrintDefaultBlock(int blockNumber, int x, int* y){
 	switch (blockNumber){
 	case -1:
-		printf("早                早");
+		printf("早            早");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("早                早");
+		printf("早            早");
 		break;
 	case 0:
-		printf("早    ﹥﹥﹥﹥    早");
+		printf("早  ﹥﹥﹥﹥  早");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("早                早");
+		printf("早            早");
 		break;
 	case 1:
-		printf("早          ﹥    早");
+		printf("早       ﹥   早");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("早      ﹥﹥﹥    早");
+		printf("早   ﹥﹥﹥   早");
 		break;
 	case 2:
-		printf("早       ﹥﹥     早");
+		printf("早     ﹥﹥   早");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("早     ﹥﹥       早");
+		printf("早   ﹥﹥     早");
 		break;
 	case 3:
-		printf("早     ﹥﹥       早");
+		printf("早   ﹥﹥     早");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("早       ﹥﹥     早");
+		printf("早     ﹥﹥   早");
 		break;
 	case 4:
-		printf("早       ﹥       早");
+		printf("早     ﹥     早");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("早     ﹥﹥﹥     早");
+		printf("早   ﹥﹥﹥   早");
 		break;
 	case 5:
-		printf("早     ﹥         早");
+		printf("早   ﹥       早");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("早     ﹥﹥﹥     早");
+		printf("早   ﹥﹥﹥   早");
 		break;
 	case 6:
-		printf("早      ﹥﹥      早");
+		printf("早    ﹥﹥    早");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("早      ﹥﹥      早");
+		printf("早    ﹥﹥    早");
 		break;
 	}
 }

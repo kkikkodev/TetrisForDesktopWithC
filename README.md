@@ -32,3 +32,7 @@ tetris for desktop (OS : windows / IDE : visual studio 2013)
 - 그림자 기능 추가
 - 홀드 기능 추가
 - 다음 블럭 2 개로 변경
+
+[ver 0.6 : https://youtu.be/lsGv9G46sNs]
+- 화면 갱신 방법을 전체 갱신에서 부분 갱신으로 변경
+- 게임 엔딩 UI 변경

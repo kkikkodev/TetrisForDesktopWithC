@@ -89,7 +89,7 @@ void TetrisView_PauseGame(TetrisView* tetrisView){
 }
 
 void TetrisView_EndGame(TetrisView* tetrisView){
-	TetrisManager_StopTotalTime(&tetrisView->tetrisManager);
+	TetrisManager_PauseTotalTime(&tetrisView->tetrisManager);
 	PlaySound(NULL, 0, 0);
 	TetrisView_ProcessEndMenu(tetrisView);
 }
@@ -135,6 +135,7 @@ void TetrisView_AddRanking(TetrisView* tetrisView){
 	ranking.score = tetrisView->tetrisManager.score;
 	ranking.level = tetrisView->tetrisManager.speedLevel;
 	ranking.deletedLineCount = tetrisView->tetrisManager.deletedLineCount;
+	ranking.totalTime = tetrisView->tetrisManager.totalTime;
 	ranking.timestamp = time(NULL);
 	RankingManager_Create(&tetrisView->rankingManager);
 	RankingManager_Load(&tetrisView->rankingManager);

@@ -1,6 +1,7 @@
 #ifndef _BOARD_H
 #define _BOARD_H
 
+#include <windows.h>
 #include "Block.h"
 
 enum GameStatus{
@@ -18,6 +19,9 @@ typedef struct _tetrisManager{
 	int deletedLineCount;
 	int speedLevel;
 	int score;
+	HANDLE totalTimeThread;
+	long totalTime;
+	int isTotalTimeAvailable; // if totalTimeThread is alive, this variable is true
 }TetrisManager;
 
 void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel);
@@ -32,5 +36,8 @@ void TetrisManager_PrintBoard(TetrisManager* tetrisManager);
 void TetrisManager_PrintDetailInfomation(TetrisManager* tetrisManager);
 DWORD TetrisManager_GetDownMilliSecond(TetrisManager* tetrisManager);
 void TetrisManager_MakeHold(TetrisManager* tetrisManager);
+void TetrisManager_StartTotalTime(TetrisManager* tetrisManager);
+void TetrisManager_PauseTotalTime(TetrisManager* tetrisManager);
+void TetrisManager_StopTotalTime(TetrisManager* tetrisManager);
 
 #endif

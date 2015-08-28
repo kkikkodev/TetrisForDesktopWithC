@@ -72,18 +72,24 @@ void TetrisView_ProcessGame(TetrisView* tetrisView, int processType, int directi
 }
 
 void TetrisView_PauseGame(TetrisView* tetrisView){
+	TetrisManager_PauseTotalTime(&tetrisView->tetrisManager);
 	PlaySound(NULL, 0, 0);
 	FontUtil_ChangeFontColor(LIGHT_YELLOW);
 	TetrisView_ProcessPauseMenu(tetrisView);
 	FontUtil_ChangeFontColor(DEFAULT_FONT_COLOR);
 	switch (tetrisView->pauseMenu){
 	case RESUME_PAUSE_MENU:
+		TetrisManager_StartTotalTime(&tetrisView->tetrisManager);
 		PlaySound(TEXT(TETRIS_BACKGROUND_MUSIC_FILE_NAME), NULL, SND_ASYNC | SND_LOOP);
+		break;
+	case MAIN_MENU_PAUSE_MENU:
+		TetrisManager_StopTotalTime(&tetrisView->tetrisManager);
 		break;
 	}
 }
 
 void TetrisView_EndGame(TetrisView* tetrisView){
+	TetrisManager_StopTotalTime(&tetrisView->tetrisManager);
 	PlaySound(NULL, 0, 0);
 	TetrisView_ProcessEndMenu(tetrisView);
 }
@@ -298,7 +304,7 @@ void TetrisView_ProcessEndMenu(TetrisView* tetrisView){
 	int y = END_MENU_Y;
 	system("cls");
 	CursorUtil_GotoXY(x, y++);
-	printf("бсбсбс  бс  бс  бсбсбс          бсбсбс  бс  бс  бсбс");          
+	printf("бсбсбс  бс  бс  бсбсбс          бсбсбс  бс  бс  бсбс");
 	CursorUtil_GotoXY(x, y++);
 	printf("  бс    бс  бс  бс              бс       бс бс  бс бс");
 	CursorUtil_GotoXY(x, y++);

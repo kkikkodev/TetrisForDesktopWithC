@@ -1,10 +1,12 @@
 #include <stdio.h>
+#include <process.h>
 #include <string.h>
 #include <windows.h>
 #include "TetrisManager.h"
 #include "Util.h"
 #include "Constant.h"
 
+#define MILLI_SECONDS_PER_SECOND 1000
 #define INITIAL_SPEED 300
 #define SPEED_LEVEL_OFFSET 40
 #define LEVELP_UP_CONDITION 3
@@ -34,6 +36,8 @@ static void _TetrisManager_MakeShadow(TetrisManager* tetrisManager);
 static int _TetrisManager_CheckValidPosition(TetrisManager* tetrisManager, int blockType, int direction);
 static void _TetrisManager_ChangeBoardByDirection(TetrisManager* tetrisManager, int blockType, int direction);
 static void _TetrisManager_ChangeBoardByStatus(TetrisManager* tetrisManager, int blockType, int status);
+static DWORD WINAPI _TetrisManager_OnTotalTimeThreadStarted(void *tetrisManager);
+static void _TetrisManager_PrintTotalTime(TetrisManager tetrisManager);
 
 void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel){
 	Block block;
@@ -46,6 +50,9 @@ void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel){
 	tetrisManager->deletedLineCount = 0;
 	tetrisManager->speedLevel = speedLevel;
 	tetrisManager->score = 0;
+	tetrisManager->totalTimeThread = NULL;
+	tetrisManager->totalTime = 0;
+	tetrisManager->isTotalTimeAvailable = False;
 }
 
 void TetrisManager_ProcessDirection(TetrisManager* tetrisManager, int direction){
@@ -181,6 +188,8 @@ void TetrisManager_PrintDetailInfomation(TetrisManager* tetrisManager){
 	Block_PrintNext(tetrisManager->block, 1, x, y);
 	y += 5;
 	Block_PrintHold(tetrisManager->block, x, y);
+	TetrisManager_StartTotalTime(tetrisManager);
+	_TetrisManager_PrintTotalTime(*tetrisManager);
 }
 
 DWORD TetrisManager_GetDownMilliSecond(TetrisManager* tetrisManager){
@@ -214,6 +223,22 @@ void TetrisManager_MakeHold(TetrisManager* tetrisManager){
 		_TetrisManager_PrintBlock(tetrisManager, MOVING_BLOCK, MOVING_BLOCK);
 		_TetrisManager_MakeShadow(tetrisManager);
 	}
+}
+
+void TetrisManager_StartTotalTime(TetrisManager* tetrisManager){
+	DWORD totalTimeThreadID;
+	tetrisManager->isTotalTimeAvailable = True;
+	tetrisManager->totalTimeThread = (HANDLE)_beginthreadex(NULL, 0, _TetrisManager_OnTotalTimeThreadStarted, tetrisManager, 0, (unsigned *)&totalTimeThreadID);
+}
+
+void TetrisManager_PauseTotalTime(TetrisManager* tetrisManager){
+	tetrisManager->isTotalTimeAvailable = False;
+	tetrisManager->totalTime--; // to show not one added time but paused time
+}
+
+void TetrisManager_StopTotalTime(TetrisManager* tetrisManager){
+	tetrisManager->isTotalTimeAvailable = False;
+	tetrisManager->totalTime = 0;
 }
 
 static void _TetrisManager_PrintStatus(TetrisManager* tetrisManager, int x, int y){
@@ -271,6 +296,7 @@ static void _TetrisManager_PrintBlock(TetrisManager* tetrisManager, int blockTyp
 		printf("%s", boardTypesToPrint[status]);
 	}
 	FontUtil_ChangeFontColor(DEFAULT_FONT_COLOR);
+	_TetrisManager_PrintTotalTime(*tetrisManager); // because of multi thread problem, this function covers total time
 }
 
 static void _TetrisManager_InitBoard(TetrisManager* tetrisManager){
@@ -327,7 +353,7 @@ static void _TetrisManager_DeleteLines(TetrisManager* tetrisManager, int* indexe
 	int j;
 	int k = BOARD_ROW_SIZE - 2;
 	int toDelete;
-	char temp[BOARD_ROW_SIZE][BOARD_COL_SIZE] = {EMPTY, };
+	char temp[BOARD_ROW_SIZE][BOARD_COL_SIZE] = { EMPTY, };
 	for (i = BOARD_ROW_SIZE - 2; i > 0; i--){
 		toDelete = False;
 		for (j = 0; j < BOARD_COL_SIZE; j++){
@@ -466,3 +492,29 @@ static void _TetrisManager_ChangeBoardByStatus(TetrisManager* tetrisManager, int
 	}
 }
 
+static DWORD WINAPI _TetrisManager_OnTotalTimeThreadStarted(void *tetrisManager){
+	while (True){
+		if (!((TetrisManager*)tetrisManager)->isTotalTimeAvailable){
+			break;
+		}
+		Sleep(MILLI_SECONDS_PER_SECOND);
+		((TetrisManager*)tetrisManager)->totalTime++;
+	}
+	return 0;
+}
+
+static void _TetrisManager_PrintTotalTime(TetrisManager tetrisManager){
+	int hour = tetrisManager.totalTime / (60 * 60);
+	int minute = tetrisManager.totalTime % (60 * 60) / 60;
+	int second = tetrisManager.totalTime % 60;
+
+	// use temp size (magic number)
+	int x = 42;
+	int y = 20;
+	CursorUtil_GotoXY(x, y++);
+	printf("旨  time  旬");
+	CursorUtil_GotoXY(x, y++);
+	printf("早%02d:%02d:%02d早", hour, minute, second);
+	CursorUtil_GotoXY(x, y++);
+	printf("曲收收收收旭");
+}

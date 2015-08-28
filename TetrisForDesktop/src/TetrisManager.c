@@ -417,7 +417,7 @@ static Block _TetrisManager_GetBlockByType(TetrisManager* tetrisManager, int blo
 	}
 }
 
-void _TetrisManager_MakeShadow(TetrisManager* tetrisManager){
+static void _TetrisManager_MakeShadow(TetrisManager* tetrisManager){
 	tetrisManager->shadow = tetrisManager->block;
 	while (!TetrisManager_IsReachedToBottom(tetrisManager, SHADOW_BLOCK)){
 		_TetrisManager_ChangeBoardByDirection(tetrisManager, SHADOW_BLOCK, DOWN);

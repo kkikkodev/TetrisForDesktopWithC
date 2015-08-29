@@ -84,7 +84,7 @@ void RankingManager_Print(RankingManager* rankingManager){
 	CursorUtil_GotoXY(x, y++);
 	printf("======================================================================");
 	CursorUtil_GotoXY(x, y++);
-	printf("%5s%10s%10s%10s%10s%25s", "No", "ID", "SCORE", "LEVEL", "LINES", "DATE AND TIME");
+	printf("%3s%11s%8s%8s%8s%10s%22s", "No", "ID", "SCORE", "LEVEL", "LINES", "TIME", "DATE AND TIME");
 	CursorUtil_GotoXY(x, y++);
 	printf("----------------------------------------------------------------------");
 	CursorUtil_GotoXY(x, y++);
@@ -94,7 +94,8 @@ void RankingManager_Print(RankingManager* rankingManager){
 		Array_GetAt(&rankingManager->rankings, indexes[i], &ranking, sizeof(Ranking));
 		pTm = localtime(&ranking.timestamp);
 		strftime(timestampForPrint, sizeof(timestampForPrint), "%Y-%m-%d %H:%M:%S", pTm);
-		printf("%5d%10s%10d%10d%10d%25s", i + 1, ranking.id, ranking.score, ranking.level, ranking.deletedLineCount, timestampForPrint);
+		printf("%3d%11s%8d%8d%8d  %02d:%02d:%02d%22s", i + 1, ranking.id, ranking.score, ranking.level, ranking.deletedLineCount,
+			ranking.totalTime / (60 * 60), ranking.totalTime % (60 * 60) / 60, ranking.totalTime % 60, timestampForPrint);
 		CursorUtil_GotoXY(x, y++);
 	}
 	printf("======================================================================");

@@ -11,7 +11,8 @@ typedef struct _ranking{
 	int score;
 	int level;
 	int deletedLineCount;
-	time_t timestamp;
+	long totalTime; // game time
+	time_t timestamp; // ranking record date and time
 }Ranking;
 
 typedef struct _rankingManager{

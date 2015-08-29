@@ -103,7 +103,7 @@ Block Block_Make(int isFirst, Block block){
 	} while (block.current == next2 || next1 == next2);
 	Queue_Put(&block.next, &next2, sizeof(int));
 	block.direction = UP;
-	block.color = rand() % (FONT_COLOR_SIZE - 2) + 2;
+	block.color = rand() % (FONT_COLOR_SIZE - 1) + 1;
 	return block;
 }
 

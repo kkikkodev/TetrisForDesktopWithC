@@ -36,3 +36,7 @@ tetris for desktop (OS : windows / IDE : visual studio 2013)
 [ver 0.6 : https://youtu.be/lsGv9G46sNs]
 - 화면 갱신 방법을 전체 갱신에서 부분 갱신으로 변경
 - 게임 엔딩 UI 변경
+
+[ver 0.7 : https://youtu.be/gZcZY6HPSVE]
+- 게임 진행 시간 기능
+- 10 레벨부터 장애물 발생 기능

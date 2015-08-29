@@ -2,10 +2,12 @@
 #include <process.h>
 #include <string.h>
 #include <windows.h>
+#include <time.h>
 #include "TetrisManager.h"
 #include "Util.h"
 #include "Constant.h"
 
+#define MAX_MAKE_OBSTACLE_ONE_LINE_COUNT 2
 #define MILLI_SECONDS_PER_SECOND 1000
 #define INITIAL_SPEED 300
 #define SPEED_LEVEL_OFFSET 40
@@ -38,6 +40,7 @@ static void _TetrisManager_ChangeBoardByDirection(TetrisManager* tetrisManager, 
 static void _TetrisManager_ChangeBoardByStatus(TetrisManager* tetrisManager, int blockType, int status);
 static DWORD WINAPI _TetrisManager_OnTotalTimeThreadStarted(void *tetrisManager);
 static void _TetrisManager_PrintTotalTime(TetrisManager tetrisManager);
+static void _TetrisManager_MakeObstacleOneLine(TetrisManager* tetrisManager);
 
 void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel){
 	Block block;
@@ -123,6 +126,9 @@ int TetrisManager_ProcessReachedCase(TetrisManager* tetrisManager){
 	int x = 40;
 	int y = 15;
 
+	// if this variable equals to 
+	static int makeObstacleOneLineCount = 0;
+
 	_TetrisManager_PrintBlock(tetrisManager, SHADOW_BLOCK, EMPTY);
 	_TetrisManager_ChangeBoardByStatus(tetrisManager, SHADOW_BLOCK, EMPTY);
 	_TetrisManager_PrintBlock(tetrisManager, MOVING_BLOCK, EMPTY);
@@ -131,6 +137,14 @@ int TetrisManager_ProcessReachedCase(TetrisManager* tetrisManager){
 	tetrisManager->block = Block_Make(False, tetrisManager->block);
 	_TetrisManager_PrintBlock(tetrisManager, MOVING_BLOCK, MOVING_BLOCK);
 	_TetrisManager_MakeShadow(tetrisManager);
+	if (makeObstacleOneLineCount == MAX_MAKE_OBSTACLE_ONE_LINE_COUNT){
+		if (tetrisManager->speedLevel == MAX_SPEED_LEVEL){
+			_TetrisManager_MakeObstacleOneLine(tetrisManager);
+		}
+		makeObstacleOneLineCount = 0;
+	} else{
+		makeObstacleOneLineCount++;
+	}
 	Block_PrintNext(tetrisManager->block, 0, x, y);
 	x += 20;
 	Block_PrintNext(tetrisManager->block, 1, x, y);
@@ -518,3 +532,38 @@ static void _TetrisManager_PrintTotalTime(TetrisManager tetrisManager){
 	CursorUtil_GotoXY(x, y++);
 	printf("曲收收收收旭");
 }
+
+static void _TetrisManager_MakeObstacleOneLine(TetrisManager* tetrisManager){
+	int i;
+	int j;
+	int isFixedBlock;
+	int fixedBlockCount = 0;
+	char temp[BOARD_ROW_SIZE][BOARD_COL_SIZE] = { EMPTY, };
+	for (i = 1; i < BOARD_COL_SIZE - 1; i++){
+		if (tetrisManager->board[1][i] == FIXED_BLOCK){
+			return;
+		}
+	}
+	srand((unsigned int)time(NULL));
+	for (i = 1; i < BOARD_COL_SIZE - 1; i++){
+		isFixedBlock = rand() % 2;
+		fixedBlockCount += isFixedBlock;
+		temp[BOARD_ROW_SIZE - 2][i] = isFixedBlock ? FIXED_BLOCK : EMPTY;
+	}
+	if (fixedBlockCount == BOARD_COL_SIZE - 2){
+		temp[BOARD_ROW_SIZE - 2][rand() % (BOARD_COL_SIZE - 2) + 1] = EMPTY;
+	}
+	for (i = BOARD_ROW_SIZE - 2; i > 0; i--){
+		for (j = 1; j < BOARD_COL_SIZE - 1; j++){
+			temp[i - 1][j] = tetrisManager->board[i][j];
+		}
+	}
+	for (i = 1; i < BOARD_ROW_SIZE - 1; i++){
+		for (j = 1; j < BOARD_COL_SIZE - 1; j++){
+			tetrisManager->board[i][j] = temp[i][j];
+		}
+	}
+	_TetrisManager_MakeShadow(tetrisManager);
+	TetrisManager_PrintBoard(tetrisManager);
+}
+

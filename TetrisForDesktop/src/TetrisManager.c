@@ -15,8 +15,8 @@
 #define STATUS_POSITION_X_TO_PRINT 38
 #define STATUS_POSITION_Y_TO_PRINT 1
 
-#define LINES_TO_DELETE_HIGHTING_COUNT 3
-#define LINES_TO_DELETE_HIGHTING_MILLISECOND 100
+#define LINES_TO_DELETE_HIGHLIGHTING_COUNT 3
+#define LINES_TO_DELETE_HIGHLIGHTING_MILLISECOND 100
 
 #define BOARD_TYPES_TO_PRINT_ROW_SIZE 12
 #define BOARD_TYPES_TO_PRINT_COL_SIZE 3
@@ -402,9 +402,9 @@ static void _TetrisManager_HighlightLinesToDelete(TetrisManager* tetrisManager, 
 	int i;
 	int j;
 	int k;
-	for (i = 0; i < LINES_TO_DELETE_HIGHTING_COUNT; i++){
+	for (i = 0; i < LINES_TO_DELETE_HIGHLIGHTING_COUNT; i++){
 		FontUtil_ChangeFontColor(JADE);
-		Sleep(LINES_TO_DELETE_HIGHTING_MILLISECOND);
+		Sleep(LINES_TO_DELETE_HIGHLIGHTING_MILLISECOND);
 		for (j = 0; j < count; j++){
 			CursorUtil_GotoXY(2, indexes[j]);
 			for (k = 0; k < BOARD_COL_SIZE - 2; k++){
@@ -412,7 +412,7 @@ static void _TetrisManager_HighlightLinesToDelete(TetrisManager* tetrisManager, 
 			}
 		}
 		FontUtil_ChangeFontColor(DEFAULT_FONT_COLOR);
-		Sleep(LINES_TO_DELETE_HIGHTING_MILLISECOND);
+		Sleep(LINES_TO_DELETE_HIGHLIGHTING_MILLISECOND);
 		for (j = 0; j < count; j++){
 			CursorUtil_GotoXY(2, indexes[j]);
 			for (k = 0; k < BOARD_COL_SIZE - 2; k++){

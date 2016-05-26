@@ -162,7 +162,7 @@ void TetrisView_ShowSetting(TetrisView* tetrisView){
 	CursorUtil_GotoXY(x, y++);
 	printf("┗━━━━━━━━━┛");
 	x += 4;
-	y -= 2;
+	y -= 3;
 	CursorUtil_GotoXY(x, y++);
 	CursorUtil_Show();
 	//scanf("%d", &tetrisView->level); // 레벨 입력받는 함수를 따로 만들었기 때문에 삭제

@@ -44,10 +44,15 @@ static void _TetrisManager_MakeObstacleOneLine(TetrisManager* tetrisManager);
 
 //아이템에 의해 줄이 제거되는 경우 점수와 레벨에 반영되지 않는다.
 static void _TetrisManager_Item_DeleteLines(TetrisManager* tetrisManager, int* indexes, int count);
+
 //게임 도중 board의 테두리의 형태를 유지시킨다.
 static void TetrisManager_MaintainBoard(TetrisManager* tetrisManager);
+
 //줄이 제거 된 후 그림자를 처리한다.
 static void TetrisManager_Item_ProcessBLOCK(TetrisManager* tetrisManager, int blockType, int number);
+
+//전체 줄 제거하는 아이템 사용할 때, 행 전체를 indexes에 담고 행 갯수를 세어 count에 담는다.
+static void TetrisManager_SearchAllLineIndexesToDelete(TetrisManager* tetrisManager, int* indexes, int* count);
 
 void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel){
 	Block block;
@@ -699,4 +704,41 @@ void TetrisManager_Item_RemoveTwoRow(TetrisManager* tetrisManager){
 	TetrisManager_MaintainBoard(tetrisManager);									//테두리 유지
 
 	_TetrisManager_PrintStatus(tetrisManager, x, y);							//레벨, 제거 라인수, 점수 표시
+}
+
+void TetrisManager_Item_RemoveAllRow(TetrisManager* tetrisManager){
+	//아이템3 : 전체 줄 제거
+	int indexes[BOARD_ROW_SIZE];
+	int count;
+
+	// use temp size (magic number)
+	int x = 38;
+	int y = 1;
+
+	TetrisManager_SearchAllLineIndexesToDelete(tetrisManager, indexes, &count);		//삭제해야 할 행의 번호들을 indexes에 담는다.
+	
+	if (count > 0){
+
+		_TetrisManager_PrintBlock(tetrisManager, SHADOW_BLOCK, EMPTY);				//삭제할 행 깜빡이는 동안 그림자 블록 안보이게
+		_TetrisManager_PrintBlock(tetrisManager, MOVING_BLOCK, EMPTY);				//삭제할 행 깜빡이는 동안 내려오는 블록 안보이게
+		_TetrisManager_HighlightLinesToDelete(tetrisManager, indexes, count);		//삭제할 행을 깜빡인다.
+		_TetrisManager_Item_DeleteLines(tetrisManager, indexes, count);				//삭제
+
+		_TetrisManager_PrintStatus(tetrisManager, x, y);							//레벨, 제거 라인수, 점수 표시	
+	}
+}
+
+static void TetrisManager_SearchAllLineIndexesToDelete(TetrisManager* tetrisManager, int* indexes, int* count){
+	int i;
+	int j;
+	memset(indexes, -1, sizeof(int)* (BOARD_ROW_SIZE - 2));		//indexes을 초기화
+	*count = 0;
+	for (i = 1; i < BOARD_ROW_SIZE - 1; i++){					//행 전체를 indexes에 담고 행 갯수를 세어 count에 담는다.
+		for (j = 1; j < BOARD_COL_SIZE - 1; j++){
+			if (tetrisManager->board[i][j] == FIXED_BLOCK){
+				indexes[(*count)++] = i;
+				break;
+			}
+		}
+	}
 }

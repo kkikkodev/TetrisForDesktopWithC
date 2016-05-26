@@ -53,4 +53,6 @@ void TetrisManager_Item_RemoveAllRow(TetrisManager* tetrisManager);	//아이템3 : 
 void TetrisManager_ChangeNextBlock(TetrisManager* tetrisManager);	//다음블럭과 다다음블럭 바꾸기
 void TetrisManager_BlindNextBlock(TetrisManager* tetrisManager);	//다음블럭 숨기기
 
+void changeShadowColor(int level); // 레벨별로 그림자 색을 다르게 출력하는 함수
+
 #endif

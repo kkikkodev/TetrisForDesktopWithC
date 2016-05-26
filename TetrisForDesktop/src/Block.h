@@ -23,4 +23,7 @@ void Block_ChangeCurrentForHold(Block* block);
 void Block_PrintNext(Block block, int index, int x, int y);
 void Block_PrintHold(Block block, int x, int y);
 
+//다음 블럭과 다다음 블럭 바꾸기
+void Block_ChangeNext(Block block);
+
 #endif

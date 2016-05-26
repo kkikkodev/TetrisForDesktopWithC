@@ -21,7 +21,8 @@ enum KeyCode{
 
 	P_KEY_CODE = 112,		//아이템 : 한 줄 지우기
 	O_KEY_CODE = 111,		//아이템 : 두 줄 지우기
-	I_KEY_CODE = 105		//아이템 : 전체 지우기
+	I_KEY_CODE = 105,		//아이템 : 전체 지우기
+	X_KEY_CODE = 120		//다음블럭과 다다음블럭 바꾸기
 };
 
 enum FontColor{

@@ -54,6 +54,9 @@ static void TetrisManager_Item_ProcessBLOCK(TetrisManager* tetrisManager, int bl
 //전체 줄 제거하는 아이템 사용할 때, 행 전체를 indexes에 담고 행 갯수를 세어 count에 담는다.
 static void TetrisManager_SearchAllLineIndexesToDelete(TetrisManager* tetrisManager, int* indexes, int* count);
 
+//다음블럭과 다다음블럭을 바꿀 수 있는 횟수를 레벨에 맞게 수정한다.
+void TetrisManager_InitializeNextCount(TetrisManager* tetrisManager, int speedLevel);	
+
 void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel){
 	Block block;
 	block.current = -1;
@@ -68,6 +71,9 @@ void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel){
 	tetrisManager->totalTimeThread = NULL;
 	tetrisManager->totalTime = 0;
 	tetrisManager->isTotalTimeAvailable = False;
+
+	//다음블럭과 다다음블럭을 바꿀수 있는 횟수와 다음블록 숨기는 주기를 초기화
+	TetrisManager_InitializeNextCount(tetrisManager,tetrisManager->speedLevel);		
 }
 
 void TetrisManager_ProcessDirection(TetrisManager* tetrisManager, int direction){
@@ -348,9 +354,12 @@ static void _TetrisManager_InitBoard(TetrisManager* tetrisManager){
 	tetrisManager->board[BOARD_ROW_SIZE - 1][0] = LEFT_BOTTOM_EDGE;
 	tetrisManager->board[BOARD_ROW_SIZE - 1][BOARD_COL_SIZE - 1] = RIGHT_BOTTOM_EDGE;
 }
+
 static void _TetrisManager_UpSpeedLevel(TetrisManager* tetrisManager){
 	if (tetrisManager->speedLevel < MAX_SPEED_LEVEL){
 		tetrisManager->speedLevel++;
+				
+		TetrisManager_InitializeNextCount(tetrisManager,tetrisManager->speedLevel);		//다음블럭과 다다음블럭을 바꿀수 있는 횟수를 다시 초기화해준다.
 	}
 }
 
@@ -741,4 +750,61 @@ static void TetrisManager_SearchAllLineIndexesToDelete(TetrisManager* tetrisMana
 			}
 		}
 	}
+}
+
+void TetrisManager_ChangeNextBlock(TetrisManager* tetrisManager){
+	// use temp size (magic number)
+	int x = 40;
+	int y = 15;
+
+	if(tetrisManager->changeNextCount>0){
+		//다음블록과 다다음블록을 바꿀 수 있는 횟수가 남아있고, 다음블럭이 숨겨져있는 상태가 아니라면
+
+		Block_ChangeNext(tetrisManager->block);										//queue에서 구조적으로 변경
+
+		//view에서도 변경된 모습대로 보이도록 다시 print
+		Block_PrintNext(tetrisManager->block, 0, x, y);								//다음 블럭 출력
+		x += 20;
+		Block_PrintNext(tetrisManager->block, 1, x, y);								//다다음 블럭 출력
+
+		tetrisManager->changeNextCount--;											//다음블록과 다다음블록을 바꿀 수 있는 횟수를 1회 차감
+	}
+	printf("%d",tetrisManager->changeNextCount);										//다음블록과 다다음블록을 바꿀 수 있는 횟수를 출력
+}
+
+static void TetrisManager_InitializeNextCount(TetrisManager* tetrisManager,int speedLevel){
+
+	switch(speedLevel){
+		case 1:
+			tetrisManager->changeNextCount=10;
+			break;
+		case 2:
+			tetrisManager->changeNextCount=9;
+			break;
+		case 3:
+			tetrisManager->changeNextCount=8;
+			break;
+		case 4:
+			tetrisManager->changeNextCount=7;
+			break;
+		case 5:
+			tetrisManager->changeNextCount=6;
+			break;
+		case 6:
+			tetrisManager->changeNextCount=5;
+			break;
+		case 7:
+			tetrisManager->changeNextCount=4;
+			break;
+		case 8:
+			tetrisManager->changeNextCount=3;
+			break;
+		case 9:
+			tetrisManager->changeNextCount=2;
+			break;
+		case 10:
+			tetrisManager->changeNextCount=1;
+			break;
+	}
+	printf("%d",tetrisManager->changeNextCount);	
 }

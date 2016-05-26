@@ -22,6 +22,8 @@ typedef struct _tetrisManager{
 	HANDLE totalTimeThread;
 	long totalTime;
 	int isTotalTimeAvailable; // if totalTimeThread is alive, this variable is true
+
+	int changeNextCount;		//레벨마다 다음블록과 다다음블록을 바꿀 수 있는 횟수를 지정
 }TetrisManager;
 
 void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel);
@@ -43,5 +45,6 @@ void TetrisManager_StopTotalTime(TetrisManager* tetrisManager);
 void TetrisManager_Item_RemoveOneRow(TetrisManager* tetrisManager);	//아이템1 : 한 줄 제거
 void TetrisManager_Item_RemoveTwoRow(TetrisManager* tetrisManager);	//아이템2 : 두 줄 제거
 void TetrisManager_Item_RemoveAllRow(TetrisManager* tetrisManager);	//아이템3 : 전체 줄 제거
+void TetrisManager_ChangeNextBlock(TetrisManager* tetrisManager);//다음블럭과 다다음블럭 바꾸기
 
 #endif

@@ -345,3 +345,8 @@ void TetrisView_Item_RemoveAllRow(TetrisView* tetrisView){
 	//아이템3 : 전체 줄 제거
 	TetrisManager_Item_RemoveAllRow(&tetrisView->tetrisManager);
 }
+
+//다음블럭과 다다음블럭 바꾸기
+void TetrisView_ChangeNextBlock(TetrisView* tetrisView){
+	TetrisManager_ChangeNextBlock(&tetrisView->tetrisManager);
+}

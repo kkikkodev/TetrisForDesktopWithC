@@ -26,4 +26,7 @@ void Block_PrintHold(Block block, int x, int y);
 //다음 블럭과 다다음 블럭 바꾸기
 void Block_ChangeNext(Block block);
 
+//다음 블럭 숨기기
+void Block_BlindNext(Block block, int index, int x, int y);
+
 #endif

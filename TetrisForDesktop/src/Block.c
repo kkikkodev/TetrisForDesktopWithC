@@ -270,3 +270,13 @@ void Block_ChangeNext(Block block){
 	Queue_Modify(&block.next, &next1, 0, sizeof(int));	//queue의 0번지의 내용을 next1의 정보로 수정한다.
 	Queue_Modify(&block.next, &next2, 1, sizeof(int));	//queue의 1번지의 내용을 next2의 정보로 수정한다.
 }
+
+void Block_BlindNext(Block block, int index, int x, int y){
+	ScreenUtil_ClearRectangle(x + 2, y + 1, 12, 2); // use temp size (magic number)
+	CursorUtil_GotoXY(x, y++);
+	printf("┏━ Next %d ━┓", index + 1);
+	CursorUtil_GotoXY(x, y++);
+	_Block_PrintDefaultBlock(-1, x, &y);
+	CursorUtil_GotoXY(x, y++);
+	printf("┗━━━━━━┛");
+}

@@ -33,4 +33,6 @@ void TetrisView_Item_RemoveTwoRow(TetrisView* tetrisView);	//아이템2 : 두 줄 제�
 void TetrisView_Item_RemoveAllRow(TetrisView* tetrisView);	//아이템3 : 전체 줄 제거
 void TetrisView_ChangeNextBlock(TetrisView* tetrisView);//다음블럭과 다다음블럭 바꾸기
 
+int level_scanf(int x, int y); // 레벨 입력받는 함수
+
 #endif

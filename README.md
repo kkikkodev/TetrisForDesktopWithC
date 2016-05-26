@@ -1,42 +1,48 @@
 # TetrisForDesktop
 tetris for desktop (OS : windows / IDE : visual studio 2013)
 
-ÇÁ·Î±×·¥¿¡ ´ëÇÑ ÀÚ¼¼ÇÑ ¼³¸í : http://kkikkodev.tistory.com
+í”„ë¡œê·¸ëž¨ì— ëŒ€í•œ ìžì„¸í•œ ì„¤ëª… : http://kkikkodev.tistory.com
+\
+í™˜ê²½ì„¤ì •ì— ëŒ€í•œ ìžì„¸í•œ ì„¤ëª… :
+http://fuerte.tistory.com/125
+http://belitino.tistory.com/204
+http://www.devpia.com/Maeul/Contents/Detail.aspx?BoardID=52&MAEULNO=20&no=51630&page=9
+visual studio í•˜ìœ„ë²„ì „ì—ì„œë„ ì‹¤í–‰ ê°€ëŠ¥í•˜ë„ë¡ í”„ë¡œì íŠ¸ ì†ì„± ë³€ê²½
 
 [ver 0.1 : https://youtu.be/6YmKSgWPkeY]
-- »ó, ÇÏ, ÁÂ, ¿ì, ½ºÆäÀÌ½º¹Ù Å° ÀÔ·Â Ã³¸®
-- ÇÑ ÁÙ »èÁ¦ ±â´É
-- ´ÙÀ½ ºí·° Ãâ·Â ±â´É
-- ½ºÇÇµå ·¹º§ ¹× »èÁ¦ ÁÙ ¼ö Ãâ·Â ±â´É
+- ìƒ, í•˜, ì¢Œ, ìš°, ìŠ¤íŽ˜ì´ìŠ¤ë°” í‚¤ ìž…ë ¥ ì²˜ë¦¬
+- í•œ ì¤„ ì‚­ì œ ê¸°ëŠ¥
+- ë‹¤ìŒ ë¸”ëŸ­ ì¶œë ¥ ê¸°ëŠ¥
+- ìŠ¤í”¼ë“œ ë ˆë²¨ ë° ì‚­ì œ ì¤„ ìˆ˜ ì¶œë ¥ ê¸°ëŠ¥
 
 [ver 0.2 : https://youtu.be/Hy87AAspXq8]
-- ºí·° ³»·Á¿À´Â µô·¹ÀÌ ¹æ½ÄÀ» ÇÁ·¹ÀÓ ´ÜÀ§·Î ÂÉ°³´Â ¹æ½ÄÀ¸·Î º¯°æ
-- ¿¬¼ÓÀ¸·Î Å° ´©¸£°í ÀÖ´Â °æ¿ì ¹ö±× ¼öÁ¤
+- ë¸”ëŸ­ ë‚´ë ¤ì˜¤ëŠ” ë”œë ˆì´ ë°©ì‹ì„ í”„ë ˆìž„ ë‹¨ìœ„ë¡œ ìª¼ê°œëŠ” ë°©ì‹ìœ¼ë¡œ ë³€ê²½
+- ì—°ì†ìœ¼ë¡œ í‚¤ ëˆ„ë¥´ê³  ìžˆëŠ” ê²½ìš° ë²„ê·¸ ìˆ˜ì •
 
 [ver 0.3 : https://youtu.be/Gzz5ZSycuMw]
-- ºí·° Å¸ÀÔ Ãß°¡ ¹× »ö»ó Ãß°¡ (·£´ý)
-- ¼Óµµ ·¹º§ ¹× UI º¯°æ
+- ë¸”ëŸ­ íƒ€ìž… ì¶”ê°€ ë° ìƒ‰ìƒ ì¶”ê°€ (ëžœë¤)
+- ì†ë„ ë ˆë²¨ ë° UI ë³€ê²½
 
 [ver 0.4 : https://youtu.be/_pkyqedmqDI]
-- pause ±â´É Ãß°¡
-- ¶óÀÎ »èÁ¦½Ã ±ôºýÀÓ ¾Ö´Ï¸ÞÀÌ¼Ç Ãß°¡
-- Å×Æ®¸®½º ÆÇ Å©±â ¹× ¼Óµµ º¯°æ
-- ±»¾îÁö±â Á÷Àü ÀÌµ¿ °¡´ÉÇÒ ½Ã ÀÌµ¿ °¡´ÉÇÏ°Ô ÇÏ±â
-- ¸Þ´º¹Ù UI Àû¿ë
-- È¸Àü ¹ö±× ¼öÁ¤
+- pause ê¸°ëŠ¥ ì¶”ê°€
+- ë¼ì¸ ì‚­ì œì‹œ ê¹œë¹¡ìž„ ì• ë‹ˆë©”ì´ì…˜ ì¶”ê°€
+- í…ŒíŠ¸ë¦¬ìŠ¤ íŒ í¬ê¸° ë° ì†ë„ ë³€ê²½
+- êµ³ì–´ì§€ê¸° ì§ì „ ì´ë™ ê°€ëŠ¥í•  ì‹œ ì´ë™ ê°€ëŠ¥í•˜ê²Œ í•˜ê¸°
+- ë©”ë‰´ë°” UI ì ìš©
+- íšŒì „ ë²„ê·¸ ìˆ˜ì •
 
 [ver 0.5 : https://youtu.be/N7QJpGmXzqg]
-- Á¡¼ö Ãß°¡
-- ·©Å· ¸Þ´º Ãß°¡
-- ¼³Á¤ ¸Þ´º Ãß°¡
-- ±×¸²ÀÚ ±â´É Ãß°¡
-- È¦µå ±â´É Ãß°¡
-- ´ÙÀ½ ºí·° 2 °³·Î º¯°æ
+- ì ìˆ˜ ì¶”ê°€
+- ëž­í‚¹ ë©”ë‰´ ì¶”ê°€
+- ì„¤ì • ë©”ë‰´ ì¶”ê°€
+- ê·¸ë¦¼ìž ê¸°ëŠ¥ ì¶”ê°€
+- í™€ë“œ ê¸°ëŠ¥ ì¶”ê°€
+- ë‹¤ìŒ ë¸”ëŸ­ 2 ê°œë¡œ ë³€ê²½
 
 [ver 0.6 : https://youtu.be/lsGv9G46sNs]
-- È­¸é °»½Å ¹æ¹ýÀ» ÀüÃ¼ °»½Å¿¡¼­ ºÎºÐ °»½ÅÀ¸·Î º¯°æ
-- °ÔÀÓ ¿£µù UI º¯°æ
+- í™”ë©´ ê°±ì‹  ë°©ë²•ì„ ì „ì²´ ê°±ì‹ ì—ì„œ ë¶€ë¶„ ê°±ì‹ ìœ¼ë¡œ ë³€ê²½
+- ê²Œìž„ ì—”ë”© UI ë³€ê²½
 
 [ver 0.7 : https://youtu.be/gZcZY6HPSVE]
-- °ÔÀÓ ÁøÇà ½Ã°£ ±â´É
-- 10 ·¹º§ºÎÅÍ Àå¾Ö¹° ¹ß»ý ±â´É
+- ê²Œìž„ ì§„í–‰ ì‹œê°„ ê¸°ëŠ¥
+- 10 ë ˆë²¨ë¶€í„° ìž¥ì• ë¬¼ ë°œìƒ ê¸°ëŠ¥

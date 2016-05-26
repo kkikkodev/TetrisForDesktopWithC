@@ -42,6 +42,13 @@ static DWORD WINAPI _TetrisManager_OnTotalTimeThreadStarted(void *tetrisManager)
 static void _TetrisManager_PrintTotalTime(TetrisManager tetrisManager);
 static void _TetrisManager_MakeObstacleOneLine(TetrisManager* tetrisManager);
 
+//아이템에 의해 줄이 제거되는 경우 점수와 레벨에 반영되지 않는다.
+static void _TetrisManager_Item_DeleteLines(TetrisManager* tetrisManager, int* indexes, int count);
+//게임 도중 board의 테두리의 형태를 유지시킨다.
+static void TetrisManager_MaintainBoard(TetrisManager* tetrisManager);
+//줄이 제거 된 후 그림자를 처리한다.
+static void TetrisManager_Item_ProcessBLOCK(TetrisManager* tetrisManager, int blockType, int number);
+
 void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel){
 	Block block;
 	block.current = -1;
@@ -93,13 +100,13 @@ void TetrisManager_ProcessDeletingLines(TetrisManager* tetrisManager){
 	int x = 38;
 	int y = 1;
 
-	_TetrisManager_SearchLineIndexesToDelete(tetrisManager, indexes, &count);
+	_TetrisManager_SearchLineIndexesToDelete(tetrisManager, indexes, &count);	//삭제해야 할 행의 번호들을 indexes에 담는다.
 	if (count > 0){
 
 		//during hightlighting the lines to delete, hide moving block and shadow block
 		_TetrisManager_PrintBlock(tetrisManager, SHADOW_BLOCK, EMPTY);
 		_TetrisManager_PrintBlock(tetrisManager, MOVING_BLOCK, EMPTY);
-		_TetrisManager_HighlightLinesToDelete(tetrisManager, indexes, count);
+		_TetrisManager_HighlightLinesToDelete(tetrisManager, indexes, count);	//삭제할 행을 깜빡인다.
 		_TetrisManager_DeleteLines(tetrisManager, indexes, count);
 		_TetrisManager_ChangeBoardByStatus(tetrisManager, MOVING_BLOCK, MOVING_BLOCK);
 		TetrisManager_PrintBoard(tetrisManager);
@@ -452,7 +459,6 @@ static int _TetrisManager_CheckValidPosition(TetrisManager* tetrisManager, int b
 		if (blockType == MOVING_BLOCK && x == 0){
 			return TOP_WALL;
 		}
-		
 		if (!(tetrisManager->board[x][y] == EMPTY || tetrisManager->board[x][y] == MOVING_BLOCK || tetrisManager->board[x][y] == SHADOW_BLOCK)){
 			return tetrisManager->board[x][y];
 		}
@@ -568,3 +574,106 @@ static void _TetrisManager_MakeObstacleOneLine(TetrisManager* tetrisManager){
 	TetrisManager_PrintBoard(tetrisManager);
 }
 
+void TetrisManager_Item_RemoveOneRow(TetrisManager* tetrisManager){
+	//아이템1 : 한 줄 제거
+	int indexes[1]={BOARD_ROW_SIZE-2};											//제거할 행을 담는 index배열에 블록이 존재하는 맨 아래 행의 번호를 담는다.
+	int count=1;																//index의 길이를 저장한다.
+
+	// use temp size (magic number)
+	int x = 38;
+	int y = 1;
+
+	_TetrisManager_PrintBlock(tetrisManager, SHADOW_BLOCK, EMPTY);				//삭제할 행 깜빡이는 동안 그림자 블록 안보이게 한다.
+	_TetrisManager_PrintBlock(tetrisManager, MOVING_BLOCK, EMPTY);				//삭제할 행 깜빡이는 동안 내려오는 블록 안보이게 한다.
+	_TetrisManager_HighlightLinesToDelete(tetrisManager, indexes, count);		//삭제할 행을 깜빡인다.
+	_TetrisManager_Item_DeleteLines(tetrisManager, indexes, count);				//삭제 후 다시 그려질 상태를 tetrisManager->board에 담는다.
+
+	TetrisManager_PrintBoard(tetrisManager);									//변경된 행에 맞게 tetrisManager->board에 담겨진 대로 board에 블럭을 다시 그린다.
+
+	TetrisManager_Item_ProcessBLOCK(tetrisManager,SHADOW_BLOCK,1);				//그림자 블럭은 한 칸 위로 유지한다.
+	TetrisManager_MaintainBoard(tetrisManager);									//board의 테두리가 망가지지 않게 유지한다.
+
+	_TetrisManager_PrintStatus(tetrisManager, x, y);							//레벨, 제거 라인수, 점수 표시를 업데이트 한다.
+	
+}
+
+static void _TetrisManager_Item_DeleteLines(TetrisManager* tetrisManager, int* indexes, int count){
+	// #define BOARD_ROW_SIZE 24
+	// #define BOARD_COL_SIZE 14
+	
+	int i;
+	int j;
+	int k = BOARD_ROW_SIZE - 2;		
+	int toDelete;
+	char temp[BOARD_ROW_SIZE][BOARD_COL_SIZE] = { EMPTY, };
+
+	for (i = BOARD_ROW_SIZE - 2; i > 0; i--){				//총 board의 행에서 블록이 담겨지는 행들만큼 for문으로 돌면서 검사한다.
+		toDelete = False;
+		for (j = 0; j < count; j++){						
+			if (i == indexes[j]){							//검사하는 행번호와 index배열의 값이 동일하면 toDelete=true
+				toDelete = True;
+				break;
+			}
+		}
+		if (!toDelete){										//index배열에 들어있지 않던 값의 행번호들이면,
+			for (j = 0; j < BOARD_COL_SIZE; j++){
+				temp[k][j] = tetrisManager->board[i][j]; 	//temp : 삭제할 행들을 제외하고 남는 행들을 다시 차곡차곡 쌓는다.
+			}
+			k--;
+		}
+	}
+	
+	for (i = 1; i < BOARD_ROW_SIZE - 1; i++){				//temp를 다시 board에 담는다.
+		for (j = 1; j < BOARD_COL_SIZE - 1; j++){
+			tetrisManager->board[i][j] = temp[i][j];
+		}
+	}
+
+	TetrisManager_MaintainBoard(tetrisManager);				//board의 테두리를 유지한다.
+}
+
+static void TetrisManager_Item_ProcessBLOCK(TetrisManager* tetrisManager, int blockType, int number){	
+	//아이템을 통해 블록 제거 후 shadow블록이나 moving블록의 위치를 재설정해준다.
+	int i;
+	Block block = _TetrisManager_GetBlockByType(tetrisManager, blockType);
+
+	for (i = 0; i < POSITIONS_SIZE; i++){
+		int x = Block_GetPositions(block)[i].x;
+		int y = Block_GetPositions(block)[i].y;
+		
+		CursorUtil_GotoXY(2*y, (x+number));
+		
+		if((x+number)!=BOARD_ROW_SIZE - 1){
+			printf("%s", boardTypesToPrint[(int)EMPTY]);			
+		}
+	}
+
+	FontUtil_ChangeFontColor(DEFAULT_FONT_COLOR);
+	
+	_TetrisManager_PrintTotalTime(*tetrisManager); // because of multi thread problem, this function covers total time
+}
+
+static void TetrisManager_MaintainBoard(TetrisManager* tetrisManager){
+	//아이템을 통해 블록 제거 후 board의 테두리 모양이 망가지지 않게 다시 설정해준다.
+	int i;
+
+	for (i = 0; i < BOARD_ROW_SIZE; i++){
+		tetrisManager->board[i][0] = LEFT_WALL;						//board의 왼쪽 부분
+		tetrisManager->board[i][BOARD_COL_SIZE - 1] = RIGHT_WALL;	//board의 오른쪽 부분
+	}
+	for (i = 0; i < BOARD_COL_SIZE; i++){
+		tetrisManager->board[0][i] = TOP_WALL;						//board의 가장 윗 부분
+		tetrisManager->board[BOARD_ROW_SIZE - 1][i] = BOTTOM_WALL;	//board의 바닥 부분
+	}
+
+	//in order to make center hole at top wall, we convert center top wall into empty intentionally
+	tetrisManager->board[0][(BOARD_COL_SIZE - 2) / 2 - 1] = EMPTY;	//윗 부분에 블럭이 나오는 구멍을 표현한다.
+	tetrisManager->board[0][(BOARD_COL_SIZE - 2) / 2] = EMPTY;
+	tetrisManager->board[0][(BOARD_COL_SIZE - 2) / 2 + 1] = EMPTY;
+	tetrisManager->board[0][(BOARD_COL_SIZE - 2) / 2 + 2] = EMPTY;
+
+	tetrisManager->board[0][0] = LEFT_TOP_EDGE;						//각 모서리는 -모양이 아닌 ㄴ,ㄱ과 같이 꺾인 모양으로 그려준다.
+	tetrisManager->board[0][BOARD_COL_SIZE - 1] = RIGHT_TOP_EDGE;
+	tetrisManager->board[BOARD_ROW_SIZE - 1][0] = LEFT_BOTTOM_EDGE;
+	tetrisManager->board[BOARD_ROW_SIZE - 1][BOARD_COL_SIZE - 1] = RIGHT_BOTTOM_EDGE;
+}

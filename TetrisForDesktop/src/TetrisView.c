@@ -22,35 +22,35 @@ enum MenuStartPosition{
 };
 
 void TetrisView_StartGame(TetrisView* tetrisView){
-	PlaySound(TEXT(TETRIS_BACKGROUND_MUSIC_FILE_NAME), NULL, SND_ASYNC | SND_LOOP);
-	if (!(tetrisView->level >= MIN_SPEED_LEVEL && tetrisView->level <= MAX_SPEED_LEVEL)){
-		tetrisView->level = MIN_SPEED_LEVEL;
+	PlaySound(TEXT(TETRIS_BACKGROUND_MUSIC_FILE_NAME), NULL, SND_ASYNC | SND_LOOP); //배경음악 설정
+	if (!(tetrisView->level >= MIN_SPEED_LEVEL && tetrisView->level <= MAX_SPEED_LEVEL)){ //현재 레벨이 MIN_SPEED_LEVEL(1)보다 크거나 같고 MAX_SPEED_LEVLE(10) 작거나 같지 않으면,
+		tetrisView->level = MIN_SPEED_LEVEL; //1로 설정
 	}
-	TetrisManager_Init(&tetrisView->tetrisManager, tetrisView->level);
+	TetrisManager_Init(&tetrisView->tetrisManager, tetrisView->level); //TetrisManager에서 Init 초기화 설정
 	system("cls");
-	FontUtil_ChangeFontColor(DEFAULT_FONT_COLOR);
-	TetrisManager_PrintBoard(&tetrisView->tetrisManager);
-	TetrisManager_PrintDetailInfomation(&tetrisView->tetrisManager);
+	FontUtil_ChangeFontColor(DEFAULT_FONT_COLOR);  //기본 Font 색상으로 설정
+	TetrisManager_PrintBoard(&tetrisView->tetrisManager); //게임창 출력
+	TetrisManager_PrintDetailInfomation(&tetrisView->tetrisManager); // 게임의 모든 정보를 출력
 }
 
 void TetrisView_ProcessGame(TetrisView* tetrisView, int processType, int direction){
-
+	//게임이 진행 되면서 설정되는 ProcessType 별 실행과정
 	//it is used to move left or right at bottom in case of space which you want to move is available
 	static int processReachedCaseCount = 0;
-	if (processType == DIRECTION){
+	if (processType == DIRECTION){ //방향키를 넣었을 경우
 		TetrisManager_ProcessDirection(&tetrisView->tetrisManager, direction);
 	}
 	else if (processType == DIRECT_DOWN){
-		TetrisManager_ProcessDirectDown(&tetrisView->tetrisManager);
+		TetrisManager_ProcessDirectDown(&tetrisView->tetrisManager); //스페이스바를 입력했을 경우
 	}
-	else if (processType == AUTO){
+	else if (processType == AUTO){ //자동으로 블록이 떨어지는 것을 의미
 		TetrisManager_ProcessAuto(&tetrisView->tetrisManager);
 	}
-	if (TetrisManager_IsReachedToBottom(&tetrisView->tetrisManager, MOVING_BLOCK)){
-		if (processType == DIRECT_DOWN){
+	if (TetrisManager_IsReachedToBottom(&tetrisView->tetrisManager, MOVING_BLOCK)){ //블록이 바닥에 닿았을 경우
+		if (processType == DIRECT_DOWN){ //스페이스바 입력이라면
 			processReachedCaseCount = 0;
 			if (TetrisManager_ProcessReachedCase(&tetrisView->tetrisManager) == END){
-				TetrisView_EndGame(tetrisView);
+				TetrisView_EndGame(tetrisView); //가장 위에 블록이 모두 쌓였을 때, 게임 중지와 함께 종료 화면
 				return;
 			}
 		}
@@ -68,21 +68,21 @@ void TetrisView_ProcessGame(TetrisView* tetrisView, int processType, int directi
 			}
 		}
 	}
-	TetrisManager_ProcessDeletingLines(&tetrisView->tetrisManager);
+	TetrisManager_ProcessDeletingLines(&tetrisView->tetrisManager); //굳어진 블록이 한줄을 이루었을 경우, 한줄 삭제
 }
 
 void TetrisView_PauseGame(TetrisView* tetrisView){
-	TetrisManager_PauseTotalTime(&tetrisView->tetrisManager);
-	PlaySound(NULL, 0, 0);
-	FontUtil_ChangeFontColor(LIGHT_YELLOW);
-	TetrisView_ProcessPauseMenu(tetrisView);
+	TetrisManager_PauseTotalTime(&tetrisView->tetrisManager); //게임 진행 시간 중지
+	PlaySound(NULL, 0, 0); //배경음악 중단
+	FontUtil_ChangeFontColor(LIGHT_YELLOW); //메뉴 색상 노랑색으로 변경
+	TetrisView_ProcessPauseMenu(tetrisView); //중지되었을 때, 메뉴 화면 출력
 	FontUtil_ChangeFontColor(DEFAULT_FONT_COLOR);
 	switch (tetrisView->pauseMenu){
-	case RESUME_PAUSE_MENU:
+	case RESUME_PAUSE_MENU: //재시작
 		TetrisManager_StartTotalTime(&tetrisView->tetrisManager);
 		PlaySound(TEXT(TETRIS_BACKGROUND_MUSIC_FILE_NAME), NULL, SND_ASYNC | SND_LOOP);
 		break;
-	case MAIN_MENU_PAUSE_MENU:
+	case MAIN_MENU_PAUSE_MENU://메인화면으로 이동
 		TetrisManager_StopTotalTime(&tetrisView->tetrisManager);
 		break;
 	}
@@ -108,7 +108,7 @@ void TetrisView_AddRanking(TetrisView* tetrisView){
 	int i;
 	char id[ID_SIZE + 1] = { '\0', };
 	system("cls");
-	CursorUtil_GotoXY(x, y++);
+	CursorUtil_GotoXY(x, y++); //아이디 입력창 출력
 	printf("┏━━━━━━━━━━━━━┓");
 	CursorUtil_GotoXY(x, y++);
 	printf("┃Input ID (%d chars limit!)┃", ID_SIZE);
@@ -131,13 +131,14 @@ void TetrisView_AddRanking(TetrisView* tetrisView){
 	if (i == -1){
 		while (getchar() != '\n');
 	}
-	strcpy(ranking.id, id);
-	ranking.score = tetrisView->tetrisManager.score;
-	ranking.level = tetrisView->tetrisManager.speedLevel;
-	ranking.deletedLineCount = tetrisView->tetrisManager.deletedLineCount;
-	ranking.totalTime = tetrisView->tetrisManager.totalTime;
-	ranking.timestamp = time(NULL);
-	RankingManager_Create(&tetrisView->rankingManager);
+	strcpy(ranking.id, id); // 입력받은 아이디 저장
+	ranking.score = tetrisView->tetrisManager.score; //현재 점수
+	ranking.level = tetrisView->tetrisManager.speedLevel; // 현재 레벨
+	ranking.deletedLineCount = tetrisView->tetrisManager.deletedLineCount; //현재 삭제 라인 수
+	ranking.totalTime = tetrisView->tetrisManager.totalTime; // 게임 진행 총 시간
+	ranking.timestamp = time(NULL); 
+	//Ranking 등록에 필요한 모든 작업
+	RankingManager_Create(&tetrisView->rankingManager); 
 	RankingManager_Load(&tetrisView->rankingManager);
 	RankingManager_Add(&tetrisView->rankingManager, ranking);
 	RankingManager_Save(&tetrisView->rankingManager);
@@ -151,7 +152,7 @@ void TetrisView_ShowSetting(TetrisView* tetrisView){
 		tetrisView->level = MIN_SPEED_LEVEL;
 	}
 	system("cls");
-	CursorUtil_GotoXY(x, y++);
+	CursorUtil_GotoXY(x, y++); //레벨 입력창
 	printf("┏━━━━━━━━━┓");
 	CursorUtil_GotoXY(x, y++);
 	printf("┃Current Level : %2d┃", tetrisView->level);
@@ -162,26 +163,24 @@ void TetrisView_ShowSetting(TetrisView* tetrisView){
 	CursorUtil_GotoXY(x, y++);
 	printf("┗━━━━━━━━━┛");
 	x += 4;
-	y -= 3;
+	y -= 2;
 	CursorUtil_GotoXY(x, y++);
 	CursorUtil_Show();
-	//scanf("%d", &tetrisView->level); // 레벨 입력받는 함수를 따로 만들었기 때문에 삭제
-	tetrisView->level = level_scanf(x, y); // 레벨 입력받는 함수
-
+	scanf("%d", &tetrisView->level);
 	CursorUtil_Hide();
 	if (tetrisView->level >= MIN_SPEED_LEVEL && tetrisView->level <= MAX_SPEED_LEVEL){
 
 	}
-	else if (tetrisView->level < MIN_SPEED_LEVEL){
+	else if (tetrisView->level < MIN_SPEED_LEVEL){ //입력된 레벨이 최소값보다 작을 경우 
 		tetrisView->level = MIN_SPEED_LEVEL;
 	}
-	else if (tetrisView->level > MAX_SPEED_LEVEL){
+	else if (tetrisView->level > MAX_SPEED_LEVEL){ //입력된 레벨이 최대값보다 클경우
 		tetrisView->level = MAX_SPEED_LEVEL;
 	}
 	else{
 		tetrisView->level = MIN_SPEED_LEVEL;
 	}
-	//while (getchar() != '\n'); // 레벨 입력받는 함수를 따로 만들었기 때문에 삭제
+	while (getchar() != '\n');
 }
 
 void TetrisView_ProcessMainMenu(TetrisView* tetrisView){
@@ -331,74 +330,4 @@ DWORD TetrisView_GetDownMilliSecond(TetrisView* tetrisView){
 
 void TetrisView_MakeHold(TetrisView* tetrisView){
 	TetrisManager_MakeHold(&tetrisView->tetrisManager);
-}
-
-void TetrisView_Item_RemoveOneRow(TetrisView* tetrisView){
-	//아이템1 : 한 줄 제거
-	TetrisManager_Item_RemoveOneRow(&tetrisView->tetrisManager);
-}
-
-void TetrisView_Item_RemoveTwoRow(TetrisView* tetrisView){
-	//아이템2 : 두 줄 제거
-	TetrisManager_Item_RemoveTwoRow(&tetrisView->tetrisManager);
-}
-
-void TetrisView_Item_RemoveAllRow(TetrisView* tetrisView){
-	//아이템3 : 전체 줄 제거
-	TetrisManager_Item_RemoveAllRow(&tetrisView->tetrisManager);
-}
-
-//다음블럭과 다다음블럭 바꾸기
-void TetrisView_ChangeNextBlock(TetrisView* tetrisView){
-	TetrisManager_ChangeNextBlock(&tetrisView->tetrisManager);
-}
-
-int level_scanf(int x, int y) {
-	int ch[3] = {-1,-1,-1}; // 값을 입력받아 저장할 배열을 생성
-	while(1) {
-		CursorUtil_GotoXY(x, y); // 커서 위치 이동
-		CursorUtil_Show(); // 커서 표시
-		ch[0] = _getch(); // 첫번째 입력을 받는다
-		if (ch[0] == '1') // 첫번째 입력이 1일 경우
-		{
-			printf("%c", ch[0]); // 화면에 입력받은 숫자를 표시 (getch: 문자 입력시 화면 출력 안함)
-			while(1) {
-				CursorUtil_GotoXY(x+1, y); // 커서를 두번째 자리로 이동
-				CursorUtil_Show(); // 커서 표시
-				ch[1] = _getch(); // 두번째 입력을 받는다 
-				if (ch[1] == '0') // 첫번째 입력이 1이고, 두번째 입력이 0일 경우
-				{
-					printf("%c", ch[1]); // 화면에 입력받은 숫자를 표시 (getch: 문자 입력시 화면 출력 안함)
-					while (ch[2] != ENTER_KEY_CODE) // 세번째 입력이 엔터일 때 까지 반복문 수행
-					{
-						CursorUtil_GotoXY(x+2, y); // 커서를 세번째 자리로 이동
-						CursorUtil_Show(); // 커서 표시
-						ch[2] = _getch(); // 세번째 입력을 받는다
-					}
-					return 10; // 10을 반환
-					break;
-				}
-				else if (ch[1] == ENTER_KEY_CODE) // 첫번째 입력이 1이고, 두번째 입력이 엔터일 경우
-				{
-					return 1; // 1을 반환
-					break;
-				}
-			}
-			break;
-		}
-		else if (isdigit(ch[0])) // 첫번째 입력이 1이 아닌 다른 숫자일 경우 (2~9)
-		{	
-			printf("%c", ch[0]); // 화면에 입력받은 숫자를 표시 (getch: 문자 입력시 화면 출력 안함)
-			while (ch[1] != ENTER_KEY_CODE) // 두번째 입력이 엔터일 때 까지 반복문 수행
-			{
-				CursorUtil_GotoXY(x, y); // 커서를 첫번째 자리로 이동
-				CursorUtil_Show(); // 커서 표시
-				ch[1] = _getch(); // 두번째 입력을 받는다
-			}
-			return ch[0]-48; // 첫번째 입력받은 값을 반환
-			break;
-		}
-		else // 첫번째 입력이 숫자가 아닐 경우
-			continue; // 다시 입력받는다
-	}
 }

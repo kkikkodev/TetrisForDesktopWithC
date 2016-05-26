@@ -29,5 +29,6 @@ DWORD TetrisView_GetDownMilliSecond(TetrisView* tetrisView);
 void TetrisView_MakeHold(TetrisView* tetrisView);
 
 void TetrisView_Item_RemoveOneRow(TetrisView* tetrisView);	//아이템1 : 한 줄 제거
+void TetrisView_Item_RemoveTwoRow(TetrisView* tetrisView);	//아이템2 : 두 줄 제거
 
 #endif

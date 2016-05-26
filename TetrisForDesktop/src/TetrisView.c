@@ -335,3 +335,8 @@ void TetrisView_Item_RemoveOneRow(TetrisView* tetrisView){
 	//아이템1 : 한 줄 제거
 	TetrisManager_Item_RemoveOneRow(&tetrisView->tetrisManager);
 }
+
+void TetrisView_Item_RemoveTwoRow(TetrisView* tetrisView){
+	//아이템2 : 두 줄 제거
+	TetrisManager_Item_RemoveTwoRow(&tetrisView->tetrisManager);
+}

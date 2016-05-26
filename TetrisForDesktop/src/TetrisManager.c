@@ -204,22 +204,7 @@ void TetrisManager_PrintBoard(TetrisManager* tetrisManager){
 				FontUtil_ChangeFontColor(WHITE);
 				break;
 			case SHADOW_BLOCK:
-					if (tetrisManager->speedLevel <= 3)
-				{
-					FontUtil_ChangeFontColor(15); // WHITE
-				}
-				else if (tetrisManager->speedLevel > 3 && tetrisManager->speedLevel <= 5)
-				{
-					FontUtil_ChangeFontColor(9); // BLUE
-				}
-				else if (tetrisManager->speedLevel > 5 && tetrisManager->speedLevel <= 8)
-				{
-					FontUtil_ChangeFontColor(1); // DARK BLUE
-				}
-				else if (tetrisManager->speedLevel > 8 && tetrisManager->speedLevel <= 10)
-				{
-					FontUtil_ChangeFontColor(0); // BLACK
-				}
+				changeShadowColor(tetrisManager->speedLevel); // 레벨별로 그림자 색을 다르게 출력하는 함수
 				break;
 			}
 			printf("%s", boardTypesToPrint[tetrisManager->board[i][j]]);
@@ -363,22 +348,7 @@ static void _TetrisManager_PrintBlock(TetrisManager* tetrisManager, int blockTyp
 		FontUtil_ChangeFontColor(WHITE);
 		break;
 	case SHADOW_BLOCK:
-		if (tetrisManager->speedLevel <= 3)
-		{
-			FontUtil_ChangeFontColor(15); // WHITE
-		}
-		else if (tetrisManager->speedLevel > 3 && tetrisManager->speedLevel <= 5)
-		{
-			FontUtil_ChangeFontColor(9); // BLUE
-		}
-		else if (tetrisManager->speedLevel > 5 && tetrisManager->speedLevel <= 8)
-		{
-			FontUtil_ChangeFontColor(1); // DARK BLUE
-		}
-		else if (tetrisManager->speedLevel > 8 && tetrisManager->speedLevel <= 10)
-		{
-			FontUtil_ChangeFontColor(0); // BLACK
-		}
+		changeShadowColor(tetrisManager->speedLevel); // 레벨별로 그림자 색을 다르게 출력하는 함수
 		break;
 	}
 	for (i = 0; i < POSITIONS_SIZE; i++){
@@ -944,4 +914,23 @@ void TetrisManager_BlindNextBlock(TetrisManager* tetrisManager){
 	x+=20;
 	Block_BlindNext(tetrisManager->block, 1, x, y);								// 다다음 블럭 숨기기
 	ReleaseMutex(((TetrisManager*)tetrisManager)->mutex);						// LOCK 해제
+}
+
+void changeShadowColor(int level) {
+		if (level <= 3) // 레벨이 0~3일 경우
+		{
+			FontUtil_ChangeFontColor(15); // 그림자를 WHITE색으로 출력
+		}
+		else if (level > 3 && level <= 5) // 레벨이 4~5일 경우
+		{
+			FontUtil_ChangeFontColor(9); // 그림자를 BLUE색으로 출력
+		}
+		else if (level > 5 && level <= 8) // 레벨이 6~8일 경우
+		{
+			FontUtil_ChangeFontColor(1); // 그림자를 DARK BLUE색으로 출력
+		}
+		else if (level > 8 && level <= 10) // 레벨이 9~10일 경우
+		{
+			FontUtil_ChangeFontColor(0); // 그림자를 BLACK색으로 출력 (안보이게 함)
+		}
 }

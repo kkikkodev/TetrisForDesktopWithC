@@ -17,7 +17,9 @@ enum KeyCode{
 	UP_KEY_CODE = 72, LEFT_KEY_CODE = 75,
 	RIGHT_KEY_CODE = 77, DOWN_KEY_CODE = 80,
 	SPACE_BAR_KEY_CODE = 32, ESC_KEY_CODE = 27,
-	L_KEY_CODE = 108, ENTER_KEY_CODE = 13
+	L_KEY_CODE = 108, ENTER_KEY_CODE = 13,
+
+	P_KEY_CODE = 112		//아이템 : 한 줄 지우기
 };
 
 enum FontColor{

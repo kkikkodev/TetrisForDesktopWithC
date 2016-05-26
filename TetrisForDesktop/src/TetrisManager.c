@@ -444,6 +444,7 @@ static int _TetrisManager_CheckValidPosition(TetrisManager* tetrisManager, int b
 	int i;
 	for (i = 0; i < POSITIONS_SIZE; i++){
 		int x = Block_GetPositions(temp)[i].x;
+		int y = Block_GetPositions(temp)[i].y;
 
 		//but now, x == 0 is empty
 		//originally, x == 0 is top wall
@@ -451,7 +452,7 @@ static int _TetrisManager_CheckValidPosition(TetrisManager* tetrisManager, int b
 		if (blockType == MOVING_BLOCK && x == 0){
 			return TOP_WALL;
 		}
-		int y = Block_GetPositions(temp)[i].y;
+		
 		if (!(tetrisManager->board[x][y] == EMPTY || tetrisManager->board[x][y] == MOVING_BLOCK || tetrisManager->board[x][y] == SHADOW_BLOCK)){
 			return tetrisManager->board[x][y];
 		}

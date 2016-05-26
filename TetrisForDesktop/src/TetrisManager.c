@@ -204,7 +204,22 @@ void TetrisManager_PrintBoard(TetrisManager* tetrisManager){
 				FontUtil_ChangeFontColor(WHITE);
 				break;
 			case SHADOW_BLOCK:
-				FontUtil_ChangeFontColor(GRAY);
+					if (tetrisManager->speedLevel <= 3)
+				{
+					FontUtil_ChangeFontColor(15); // WHITE
+				}
+				else if (tetrisManager->speedLevel > 3 && tetrisManager->speedLevel <= 5)
+				{
+					FontUtil_ChangeFontColor(9); // BLUE
+				}
+				else if (tetrisManager->speedLevel > 5 && tetrisManager->speedLevel <= 8)
+				{
+					FontUtil_ChangeFontColor(1); // DARK BLUE
+				}
+				else if (tetrisManager->speedLevel > 8 && tetrisManager->speedLevel <= 10)
+				{
+					FontUtil_ChangeFontColor(0); // BLACK
+				}
 				break;
 			}
 			printf("%s", boardTypesToPrint[tetrisManager->board[i][j]]);
@@ -348,7 +363,22 @@ static void _TetrisManager_PrintBlock(TetrisManager* tetrisManager, int blockTyp
 		FontUtil_ChangeFontColor(WHITE);
 		break;
 	case SHADOW_BLOCK:
-		FontUtil_ChangeFontColor(GRAY);
+		if (tetrisManager->speedLevel <= 3)
+		{
+			FontUtil_ChangeFontColor(15); // WHITE
+		}
+		else if (tetrisManager->speedLevel > 3 && tetrisManager->speedLevel <= 5)
+		{
+			FontUtil_ChangeFontColor(9); // BLUE
+		}
+		else if (tetrisManager->speedLevel > 5 && tetrisManager->speedLevel <= 8)
+		{
+			FontUtil_ChangeFontColor(1); // DARK BLUE
+		}
+		else if (tetrisManager->speedLevel > 8 && tetrisManager->speedLevel <= 10)
+		{
+			FontUtil_ChangeFontColor(0); // BLACK
+		}
 		break;
 	}
 	for (i = 0; i < POSITIONS_SIZE; i++){

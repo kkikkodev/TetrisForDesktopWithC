@@ -72,6 +72,26 @@ int main(int argc, char* argv[]){
 							if (key == L_KEY_CODE){
 								TetrisView_MakeHold(&tetrisView);
 							}
+
+							//아이템1 : 한 줄 제거
+							if (key == P_KEY_CODE){
+								TetrisView_Item_RemoveOneRow(&tetrisView);
+							}
+
+							//아이템2 : 두 줄 제거
+							if (key == O_KEY_CODE){
+								TetrisView_Item_RemoveTwoRow(&tetrisView);
+							}
+
+							//아이템3 : 전체 줄 제거
+							if (key == I_KEY_CODE){
+								TetrisView_Item_RemoveAllRow(&tetrisView);
+							}
+
+							//다음블럭과 다다음블럭 바꾸기
+							if (key == X_KEY_CODE){
+								TetrisView_ChangeNextBlock(&tetrisView);
+							}
 						}
 					}
 				}

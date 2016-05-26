@@ -57,3 +57,9 @@ int Queue_IsEmpty(Queue* queue){
 int Queue_IsFull(Queue* queue){
 	return queue->rear >= queue->capacity - 1;
 }
+
+//다음블럭과 다다음블럭 바꾸기
+void Queue_Modify(Queue* queue, void* object, int index, size_t size){
+	//index번지의 값을 object로 수정
+	Array_Modify(&(queue->data), index, object, size);
+}

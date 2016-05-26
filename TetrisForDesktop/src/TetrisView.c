@@ -330,3 +330,23 @@ DWORD TetrisView_GetDownMilliSecond(TetrisView* tetrisView){
 void TetrisView_MakeHold(TetrisView* tetrisView){
 	TetrisManager_MakeHold(&tetrisView->tetrisManager);
 }
+
+void TetrisView_Item_RemoveOneRow(TetrisView* tetrisView){
+	//아이템1 : 한 줄 제거
+	TetrisManager_Item_RemoveOneRow(&tetrisView->tetrisManager);
+}
+
+void TetrisView_Item_RemoveTwoRow(TetrisView* tetrisView){
+	//아이템2 : 두 줄 제거
+	TetrisManager_Item_RemoveTwoRow(&tetrisView->tetrisManager);
+}
+
+void TetrisView_Item_RemoveAllRow(TetrisView* tetrisView){
+	//아이템3 : 전체 줄 제거
+	TetrisManager_Item_RemoveAllRow(&tetrisView->tetrisManager);
+}
+
+//다음블럭과 다다음블럭 바꾸기
+void TetrisView_ChangeNextBlock(TetrisView* tetrisView){
+	TetrisManager_ChangeNextBlock(&tetrisView->tetrisManager);
+}

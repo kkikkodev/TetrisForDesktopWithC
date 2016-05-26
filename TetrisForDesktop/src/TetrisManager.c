@@ -677,3 +677,26 @@ static void TetrisManager_MaintainBoard(TetrisManager* tetrisManager){
 	tetrisManager->board[BOARD_ROW_SIZE - 1][0] = LEFT_BOTTOM_EDGE;
 	tetrisManager->board[BOARD_ROW_SIZE - 1][BOARD_COL_SIZE - 1] = RIGHT_BOTTOM_EDGE;
 }
+
+void TetrisManager_Item_RemoveTwoRow(TetrisManager* tetrisManager){
+	//아이템2 : 두 줄 제거
+	int indexes[2]={BOARD_ROW_SIZE-2,BOARD_ROW_SIZE-3};							//제거할 행을 담는 index배열에 맨 아래부터 두개의 행의 번호를 담는다.
+	int count=2;
+
+	// use temp size (magic number)
+	int x = 38;
+	int y = 1;
+
+	_TetrisManager_PrintBlock(tetrisManager, SHADOW_BLOCK, EMPTY);				//삭제할 행 깜빡이는 동안 그림자 블록 안보이게	
+	_TetrisManager_PrintBlock(tetrisManager, MOVING_BLOCK, EMPTY);				//삭제할 행 깜빡이는 동안 내려오는 블록 안보이게
+	_TetrisManager_HighlightLinesToDelete(tetrisManager, indexes, count);		//삭제할 행을 깜빡인다.
+	_TetrisManager_Item_DeleteLines(tetrisManager, indexes, count);				//삭제 후 다시 그려질 상태를 tetrisManager->board에 담음.	
+
+	TetrisManager_PrintBoard(tetrisManager);									//변경된 행에 맞게 tetrisManager->board에 담겨진 대로 board에 블럭을 다시 그린다.
+
+	TetrisManager_Item_ProcessBLOCK(tetrisManager,MOVING_BLOCK,2);				//움직이던 블럭과 그림자 블럭은 두칸 위로 올려줌으로써 기존의 자리를 지킨다.
+	TetrisManager_Item_ProcessBLOCK(tetrisManager,SHADOW_BLOCK,2);				
+	TetrisManager_MaintainBoard(tetrisManager);									//테두리 유지
+
+	_TetrisManager_PrintStatus(tetrisManager, x, y);							//레벨, 제거 라인수, 점수 표시
+}

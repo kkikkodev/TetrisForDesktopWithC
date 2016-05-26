@@ -41,5 +41,6 @@ void TetrisManager_PauseTotalTime(TetrisManager* tetrisManager);
 void TetrisManager_StopTotalTime(TetrisManager* tetrisManager);
 
 void TetrisManager_Item_RemoveOneRow(TetrisManager* tetrisManager);	//아이템1 : 한 줄 제거
+void TetrisManager_Item_RemoveTwoRow(TetrisManager* tetrisManager);	//아이템2 : 두 줄 제거
 
 #endif

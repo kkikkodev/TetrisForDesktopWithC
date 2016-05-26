@@ -77,6 +77,11 @@ int main(int argc, char* argv[]){
 							if (key == P_KEY_CODE){
 								TetrisView_Item_RemoveOneRow(&tetrisView);
 							}
+
+							//아이템2 : 두 줄 제거
+							if (key == O_KEY_CODE){
+								TetrisView_Item_RemoveTwoRow(&tetrisView);
+							}
 						}
 					}
 				}

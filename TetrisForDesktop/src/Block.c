@@ -252,3 +252,31 @@ static void _Block_PrintDefaultBlock(int blockNumber, int x, int* y){
 		break;
 	}
 }
+
+void Block_ChangeNext(Block block){
+	int next,next1,next2;
+	int temp;
+
+	Queue_At(&block.next, &next, 0, sizeof(int));		//queue의 0번지에 담긴 next정보(블럭종류)를 가져온다.
+	next1=next;											//가져온 블록 정보를 next1에 복사한다.
+
+	Queue_At(&block.next, &next, 1, sizeof(int));		//queue의 1번지에 담긴 next정보(블럭종류)를 가져온다.
+	next2=next;											//가져온 블록 정보를 next2에 복사한다.
+
+	temp=next1;											//temp를 이용해 next1의 정보와 next2의 정보를 바꾼다.
+	next1=next2;
+	next2=temp;
+
+	Queue_Modify(&block.next, &next1, 0, sizeof(int));	//queue의 0번지의 내용을 next1의 정보로 수정한다.
+	Queue_Modify(&block.next, &next2, 1, sizeof(int));	//queue의 1번지의 내용을 next2의 정보로 수정한다.
+}
+
+void Block_BlindNext(Block block, int index, int x, int y){
+	ScreenUtil_ClearRectangle(x + 2, y + 1, 12, 2); // use temp size (magic number)
+	CursorUtil_GotoXY(x, y++);
+	printf("┏━ Next %d ━┓", index + 1);
+	CursorUtil_GotoXY(x, y++);
+	_Block_PrintDefaultBlock(-1, x, &y);
+	CursorUtil_GotoXY(x, y++);
+	printf("┗━━━━━━┛");
+}

@@ -399,17 +399,17 @@ void TetrisManager_UseItem(TetrisManager* tetrisManager, int index) {
 	{
 	case 1: {
 		//한줄 없애기
-		TetrisView_Item_RemoveOneRow(tetrisManager);
+		TetrisManager_Item_RemoveOneRow(tetrisManager);
 		break;
 	}
 	case 2: {
 		//두줄 없애기
-		TetrisView_Item_RemoveTwoRow(tetrisManager);
+		TetrisManager_Item_RemoveTwoRow(tetrisManager);
 		break;
 	}
 	case 3: {
 		//전체 없애기
-		TetrisView_Item_RemoveAllRow(tetrisManager);
+		TetrisManager_Item_RemoveAllRow(tetrisManager);
 		break;
 	}
 	case 4: {

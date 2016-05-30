@@ -74,6 +74,8 @@ void TetrisManager_InitializeNextCount(TetrisManager* tetrisManager, int speedLe
 
 void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel){
 	Block block;
+	int i;
+
 	block.current = -1;
 	_TetrisManager_InitBoard(tetrisManager);
 	tetrisManager->block = Block_Make(True, block);
@@ -86,7 +88,7 @@ void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel){
 	tetrisManager->totalTimeThread = NULL;
 	tetrisManager->totalTime = 0;
 	tetrisManager->isTotalTimeAvailable = False;
-	for (int i = 0; i < 5; i++){
+	for (i = 0; i < 5; i++){
 		tetrisManager->itemArray[i] = 0;
 	}
 	itemCreateCnt = 0;
@@ -376,10 +378,10 @@ void TetrisManager_StopTotalTime(TetrisManager* tetrisManager){
 }
 
 void TetrisManager_AddItem(TetrisManager* tetrisManager){ // 혜진 수정
-
+	int i;
 
 	if (itemCreateCnt == 4){ //4개 아이템이 생성되었을 경우 
-		for (int i = 0; i < ITEM_LIST_SIZE; i++){
+		for (i = 0; i < ITEM_LIST_SIZE; i++){
 			tetrisManager->itemArray[i] = tetrisManager->itemArray[i + 1]; //가장 앞자리에 있는 아이템을 버리게 됨
 		}
 		itemCreateCnt--; //카운트 변수를 1감소 시켜서 아래 조건문을 실행 하게 한다.
@@ -398,6 +400,7 @@ void TetrisManager_AddItem(TetrisManager* tetrisManager){ // 혜진 수정
 }//아이템 추가 함수
 
 void TetrisManager_UseItem(TetrisManager* tetrisManager, int index) {
+	int i;
 
 	switch (tetrisManager->itemArray[index-1])
 	{
@@ -427,7 +430,7 @@ void TetrisManager_UseItem(TetrisManager* tetrisManager, int index) {
 	}
 	//printf("%d", tetrisManager->itemArray[index - 1]);
 	itemCreateCnt--;
-	for (int i = index - 1; i < ITEM_LIST_SIZE; i++){
+	for (i = index - 1; i < ITEM_LIST_SIZE; i++){
 		tetrisManager->itemArray[i] = tetrisManager->itemArray[i + 1];
 	}
 	WaitForSingleObject(((TetrisManager*)tetrisManager)->mutex, INFINITE);		// LOCK 걸기

@@ -88,6 +88,7 @@ int main(int argc, char* argv[]){
 							if (key == I_KEY_CODE){
 								TetrisView_Item_RemoveAllRow(&tetrisView);
 							}*/
+
 							if (key == ITEM_FIRST_CODE){  //첫번째 아이템 사용 Z
 								TetrisManager_UseItem(&tetrisView, 1);
 								break;

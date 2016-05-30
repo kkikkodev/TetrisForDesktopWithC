@@ -191,18 +191,11 @@ int TetrisManager_ProcessReachedCase(TetrisManager* tetrisManager){
 	} else{
 		makeObstacleOneLineCount++;
 	}
-	WaitForSingleObject(((TetrisManager*)tetrisManager)->mutex, INFINITE);		//LOCK 걸기(다른 부분에서 커서의 색상을 변경하는 것을 막기위해 임계구역으로 보호)
-	Block_PrintNext(tetrisManager->block, 0, x, y);
-	ReleaseMutex(((TetrisManager*)tetrisManager)->mutex);						// LOCK 해제
-
-	x += 16; // 헤진 수정
-	WaitForSingleObject(((TetrisManager*)tetrisManager)->mutex, INFINITE);		//LOCK 걸기(다른 부분에서 커서의 색상을 변경하는 것을 막기위해 임계구역으로 보호)
-	Block_PrintNext(tetrisManager->block, 1, x, y);
-	ReleaseMutex(((TetrisManager*)tetrisManager)->mutex);						// LOCK 해제
-
+	
 	/*Block_PrintNext(tetrisManager->block, 0, x, y);
 	x += 20;
 	Block_PrintNext(tetrisManager->block, 1, x, y);*/
+
 	tetrisManager->isHoldAvailable = True;
 	if (TetrisManager_IsReachedToBottom(tetrisManager, MOVING_BLOCK)){
 		Block_Destroy(tetrisManager->block);

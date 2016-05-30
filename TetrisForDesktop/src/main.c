@@ -88,6 +88,7 @@ int main(int argc, char* argv[]){
 							if (key == I_KEY_CODE){
 								TetrisView_Item_RemoveAllRow(&tetrisView);
 							}*/
+
 							if (key == ITEM_FIRST_CODE){  //첫번째 아이템 사용 Z
 								TetrisManager_UseItem(&tetrisView, 1);
 								break;
@@ -96,7 +97,7 @@ int main(int argc, char* argv[]){
 								TetrisManager_UseItem(&tetrisView, 2);
 								break;
 							}
-							if (key == ITEM_THRID_CODE){  //세번째 아이템 사용 X
+							if (key == ITEM_THRID_CODE){  //세번째 아이템 사용 C
 								TetrisManager_UseItem(&tetrisView, 3);
 								break;
 							}
@@ -106,7 +107,7 @@ int main(int argc, char* argv[]){
 							}
 
 							//다음블럭과 다다음블럭 바꾸기
-							if (key == X_KEY_CODE){
+							if (key == A_KEY_CODE){
 								TetrisView_ChangeNextBlock(&tetrisView);
 							}
 						}

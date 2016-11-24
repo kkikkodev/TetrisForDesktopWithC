@@ -59,9 +59,17 @@ void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel){
 	tetrisManager->totalTimeThread = NULL;
 	tetrisManager->totalTime = 0;
 	tetrisManager->isTotalTimeAvailable = False;
-	tetrisManager->currentDeleteLineCount = 0; //콤보 변수 초기화
+
+	//콤보 변수 초기화
+	tetrisManager->currentDeleteLineCount = 0; 
 	tetrisManager->maxCombo = 0;
 	tetrisManager->isCombo = True;
+	tetrisManager->currentCombo = 0;
+
+	// 시간 초기화
+	tetrisManager->currentDeleteLineTime = Time_Init();
+	tetrisManager->lastDeleteLineTime = Time_Init();
+	tetrisManager->differenceTime = 0;
 }
 
 void TetrisManager_ProcessDirection(TetrisManager* tetrisManager, int direction){
@@ -621,5 +629,9 @@ static void _TetrisManager_ComboCount(TetrisManager* tetrisManager, int count){
 
 		tetrisManager->currentCombo += tetrisManager->currentDeleteLineCount;
 		tetrisManager->score += tetrisManager->currentDeleteLineCount * 100; // 콤보로 삭제된 라인 수 * 100
+	}
+
+	if (tetrisManager->currentCombo > tetrisManager->maxCombo) {
+			tetrisManager->maxCombo = tetrisManager->currentCombo;
 	}
 }

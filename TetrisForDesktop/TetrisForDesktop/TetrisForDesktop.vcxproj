@@ -87,6 +87,7 @@
     <ClCompile Include="..\src\TetrisManager.c" />
     <ClCompile Include="..\src\TetrisView.c" />
     <ClCompile Include="..\src\Util.c" />
+    <ClCompile Include="Time.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\Array.h" />
@@ -99,6 +100,7 @@
     <ClInclude Include="..\src\TetrisManager.h" />
     <ClInclude Include="..\src\TetrisView.h" />
     <ClInclude Include="..\src\Util.h" />
+    <ClInclude Include="Time.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

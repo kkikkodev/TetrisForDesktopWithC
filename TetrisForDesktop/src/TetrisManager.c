@@ -6,12 +6,13 @@
 #include "TetrisManager.h"
 #include "Util.h"
 #include "Constant.h"
+#include "Time.h"
 
 #define MAX_MAKE_OBSTACLE_ONE_LINE_COUNT 2
 #define MILLI_SECONDS_PER_SECOND 1000
 #define INITIAL_SPEED 300
 #define SPEED_LEVEL_OFFSET 40
-#define LEVELP_UP_CONDITION 3
+#define LEVELP_UP_CONDITION 10 
 #define STATUS_POSITION_X_TO_PRINT 38
 #define STATUS_POSITION_Y_TO_PRINT 1
 
@@ -19,7 +20,9 @@
 #define LINES_TO_DELETE_HIGHTING_MILLISECOND 100
 
 #define BOARD_TYPES_TO_PRINT_ROW_SIZE 12
-#define BOARD_TYPES_TO_PRINT_COL_SIZE 3
+#define BOARD_TYPES_TO_PRINT_COL_SIZE 4
+
+#define VALID_COMBO_TIME 5 //콤보 유효 시간
 
 static const char boardTypesToPrint[BOARD_TYPES_TO_PRINT_ROW_SIZE][BOARD_TYPES_TO_PRINT_COL_SIZE] = {
 	("  "), ("■"), ("▩"), ("□"), ("┃"), ("┃"), ("━"), ("━"), ("┏"), ("┓"), ("┗"), ("┛")
@@ -41,6 +44,8 @@ static void _TetrisManager_ChangeBoardByStatus(TetrisManager* tetrisManager, int
 static DWORD WINAPI _TetrisManager_OnTotalTimeThreadStarted(void *tetrisManager);
 static void _TetrisManager_PrintTotalTime(TetrisManager tetrisManager);
 static void _TetrisManager_MakeObstacleOneLine(TetrisManager* tetrisManager);
+static void _TetrisManager_ComboCount(TetrisManager* tetrisManager, int count);
+static void _TetrisManager_PrintCombo(TetrisManager* tetrisManager, int x, int y);
 
 void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel){
 	Block block;
@@ -56,6 +61,17 @@ void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel){
 	tetrisManager->totalTimeThread = NULL;
 	tetrisManager->totalTime = 0;
 	tetrisManager->isTotalTimeAvailable = False;
+
+	//콤보 변수 초기화
+	tetrisManager->currentDeleteLineCount = 0; 
+	tetrisManager->maxCombo = 0;
+	tetrisManager->isCombo = True;
+	tetrisManager->currentCombo = 0;
+
+	//라인 삭제 시간 초기화
+	tetrisManager->currentDeleteTime = 0;
+	tetrisManager->lastDeleteTime = 0;
+	tetrisManager->diffTime = 0;
 }
 
 void TetrisManager_ProcessDirection(TetrisManager* tetrisManager, int direction){
@@ -104,6 +120,11 @@ void TetrisManager_ProcessDeletingLines(TetrisManager* tetrisManager){
 		_TetrisManager_ChangeBoardByStatus(tetrisManager, MOVING_BLOCK, MOVING_BLOCK);
 		TetrisManager_PrintBoard(tetrisManager);
 		_TetrisManager_PrintStatus(tetrisManager, x, y);
+
+		//콤보 정보 출력 위치
+		x -= 8;
+		y += 4;
+		_TetrisManager_PrintCombo(tetrisManager, x, y);
 	}
 }
 
@@ -192,8 +213,10 @@ void TetrisManager_PrintDetailInfomation(TetrisManager* tetrisManager){
 	int x = STATUS_POSITION_X_TO_PRINT;
 	int y = STATUS_POSITION_Y_TO_PRINT;
 	_TetrisManager_PrintStatus(tetrisManager, x, y);
-	x += 6;
+	x -= 8;
 	y += 4;
+	_TetrisManager_PrintCombo(tetrisManager, x, y);	// 콤보 출력
+	x += 14;
 	_TetrisManager_PrintKeys(tetrisManager, x, y);
 	x -= 4;
 	y += 10;
@@ -267,6 +290,25 @@ static void _TetrisManager_PrintStatus(TetrisManager* tetrisManager, int x, int 
 	printf("┗━━┛   ┗━━━┛   ┗━━━━━━┛");
 }
 
+//콤보 박스 출력
+static void _TetrisManager_PrintCombo(TetrisManager* tetrisManager, int x, int y){
+	ScreenUtil_ClearRectangle(x + 4, y + 1, 6, 1); // use temp size (magic number)
+	ScreenUtil_ClearRectangle(x + 4, y + 2, 6, 1); // use temp size (magic number)
+	CursorUtil_GotoXY(x, y++);
+	printf("┏ MaxCombo ┓");
+	CursorUtil_GotoXY(x, y++);
+	printf("┃%6d    ┃", tetrisManager->maxCombo);
+	CursorUtil_GotoXY(x, y++);
+	printf("┗━━━━━┛");
+	CursorUtil_GotoXY(x, y++);
+	printf("┏ ComboBox ┓");
+	CursorUtil_GotoXY(x, y++);
+	printf("┃%6d    ┃", tetrisManager->currentCombo);
+	CursorUtil_GotoXY(x, y++);
+	printf("┗━━━━━┛");
+	CursorUtil_GotoXY(x, y++);
+}
+
 static void _TetrisManager_PrintKeys(TetrisManager* tetrisManager, int x, int y){
 	ScreenUtil_ClearRectangle(x, y, 26, 9); // use temp size (magic number)
 	CursorUtil_GotoXY(x, y++);
@@ -284,7 +326,7 @@ static void _TetrisManager_PrintKeys(TetrisManager* tetrisManager, int x, int y)
 	CursorUtil_GotoXY(x, y++);
 	printf("┃ESC      ┃pause      ┃");
 	CursorUtil_GotoXY(x, y++);
-	printf("┃L (l)    ┃hold       ┃");
+	printf("┃Z (z)    ┃hold       ┃");
 	CursorUtil_GotoXY(x, y++);
 	printf("┗━━━━━━━━━━━┛");
 }
@@ -368,6 +410,9 @@ static void _TetrisManager_DeleteLines(TetrisManager* tetrisManager, int* indexe
 	int k = BOARD_ROW_SIZE - 2;
 	int toDelete;
 	char temp[BOARD_ROW_SIZE][BOARD_COL_SIZE] = { EMPTY, };
+
+	tetrisManager->lastDeleteTime = tetrisManager->currentDeleteTime; //가장 마지막에 라인 삭제가 된 시간을 마지막 시간에 대입
+
 	for (i = BOARD_ROW_SIZE - 2; i > 0; i--){
 		toDelete = False;
 		for (j = 0; j < BOARD_COL_SIZE; j++){
@@ -396,6 +441,12 @@ static void _TetrisManager_DeleteLines(TetrisManager* tetrisManager, int* indexe
 			_TetrisManager_UpSpeedLevel(tetrisManager);
 		}
 	}
+
+	tetrisManager->currentDeleteTime = Time_GetTime(); //현재 시간을 가져와 저장
+	tetrisManager->diffTime = tetrisManager->currentDeleteTime - tetrisManager->lastDeleteTime; //시간차 계산
+
+	//삭제 라인의 줄 수 저장
+	_TetrisManager_ComboCount(tetrisManager, count);
 }
 
 static void _TetrisManager_HighlightLinesToDelete(TetrisManager* tetrisManager, int* indexes, int count){
@@ -444,6 +495,7 @@ static int _TetrisManager_CheckValidPosition(TetrisManager* tetrisManager, int b
 	int i;
 	for (i = 0; i < POSITIONS_SIZE; i++){
 		int x = Block_GetPositions(temp)[i].x;
+		int y = Block_GetPositions(temp)[i].y;
 
 		//but now, x == 0 is empty
 		//originally, x == 0 is top wall
@@ -451,7 +503,7 @@ static int _TetrisManager_CheckValidPosition(TetrisManager* tetrisManager, int b
 		if (blockType == MOVING_BLOCK && x == 0){
 			return TOP_WALL;
 		}
-		int y = Block_GetPositions(temp)[i].y;
+		
 		if (!(tetrisManager->board[x][y] == EMPTY || tetrisManager->board[x][y] == MOVING_BLOCK || tetrisManager->board[x][y] == SHADOW_BLOCK)){
 			return tetrisManager->board[x][y];
 		}
@@ -567,3 +619,30 @@ static void _TetrisManager_MakeObstacleOneLine(TetrisManager* tetrisManager){
 	TetrisManager_PrintBoard(tetrisManager);
 }
 
+//현재 삭제된 라인 수와 유효 시간을 계산하여 콤보 계산
+static void _TetrisManager_ComboCount(TetrisManager* tetrisManager, int count){
+
+	if (count == 1) {// 삭제 라인 줄 수가 1일 때
+		if (tetrisManager->diffTime <= VALID_COMBO_TIME) {//유효 시간 내에 삭제하면 콤보 인정
+			tetrisManager->isCombo = True;
+		} else {
+			tetrisManager->isCombo = False;
+			tetrisManager->currentCombo = 0; //그렇지 않은 경우 현재 콤보 초기화
+		}
+	} else {
+
+		tetrisManager->isCombo = True;
+	}
+
+	if (tetrisManager->isCombo) {
+
+		tetrisManager->currentDeleteLineCount = count;
+
+		tetrisManager->currentCombo += tetrisManager->currentDeleteLineCount;
+		tetrisManager->score += tetrisManager->currentDeleteLineCount * 100; // 콤보로 삭제된 라인 수 * 100
+	}
+
+	if (tetrisManager->currentCombo > tetrisManager->maxCombo) {// 최대 콤보 수 계산
+			tetrisManager->maxCombo = tetrisManager->currentCombo;
+	}
+}

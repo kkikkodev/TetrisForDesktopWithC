@@ -3,6 +3,7 @@
 
 #include <windows.h>
 #include "Block.h"
+#include "Time.h"
 
 enum GameStatus{
 	PLAYING, END
@@ -22,6 +23,14 @@ typedef struct _tetrisManager{
 	HANDLE totalTimeThread;
 	long totalTime;
 	int isTotalTimeAvailable; // if totalTimeThread is alive, this variable is true
+	int currentDeleteLineCount; //현재 지운 라인의 수
+	int maxCombo; //최대 콤보 수
+	int isCombo; //콤보의 여부
+	int currentCombo; //현재 콤보 수
+	time_t currentDeleteTime; //현재 라인 삭제 시간
+	time_t lastDeleteTime; //마지막 라인 삭제 시간
+	time_t diffTime; //라인 삭제 시간차
+
 }TetrisManager;
 
 void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel);

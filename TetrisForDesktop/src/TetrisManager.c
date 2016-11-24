@@ -12,7 +12,7 @@
 #define MILLI_SECONDS_PER_SECOND 1000
 #define INITIAL_SPEED 300
 #define SPEED_LEVEL_OFFSET 40
-#define LEVELP_UP_CONDITION 3
+#define LEVELP_UP_CONDITION 10 
 #define STATUS_POSITION_X_TO_PRINT 38
 #define STATUS_POSITION_Y_TO_PRINT 1
 
@@ -21,6 +21,8 @@
 
 #define BOARD_TYPES_TO_PRINT_ROW_SIZE 12
 #define BOARD_TYPES_TO_PRINT_COL_SIZE 4
+
+#define VALID_COMBO_TIME 5 //콤보 유효 시간
 
 static const char boardTypesToPrint[BOARD_TYPES_TO_PRINT_ROW_SIZE][BOARD_TYPES_TO_PRINT_COL_SIZE] = {
 	("  "), ("■"), ("▩"), ("□"), ("┃"), ("┃"), ("━"), ("━"), ("┏"), ("┓"), ("┗"), ("┛")
@@ -66,10 +68,10 @@ void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel){
 	tetrisManager->isCombo = True;
 	tetrisManager->currentCombo = 0;
 
-	// 시간 초기화
-	tetrisManager->currentDeleteLineTime = Time_Init();
-	tetrisManager->lastDeleteLineTime = Time_Init();
-	tetrisManager->differenceTime = 0;
+	//라인 삭제 시간 초기화
+	tetrisManager->currentDeleteTime = 0;
+	tetrisManager->lastDeleteTime = 0;
+	tetrisManager->diffTime = 0;
 }
 
 void TetrisManager_ProcessDirection(TetrisManager* tetrisManager, int direction){
@@ -408,6 +410,9 @@ static void _TetrisManager_DeleteLines(TetrisManager* tetrisManager, int* indexe
 	int k = BOARD_ROW_SIZE - 2;
 	int toDelete;
 	char temp[BOARD_ROW_SIZE][BOARD_COL_SIZE] = { EMPTY, };
+
+	tetrisManager->lastDeleteTime = tetrisManager->currentDeleteTime; //가장 마지막에 라인 삭제가 된 시간을 마지막 시간에 대입
+
 	for (i = BOARD_ROW_SIZE - 2; i > 0; i--){
 		toDelete = False;
 		for (j = 0; j < BOARD_COL_SIZE; j++){
@@ -436,6 +441,9 @@ static void _TetrisManager_DeleteLines(TetrisManager* tetrisManager, int* indexe
 			_TetrisManager_UpSpeedLevel(tetrisManager);
 		}
 	}
+
+	tetrisManager->currentDeleteTime = Time_GetTime(); //현재 시간을 가져와 저장
+	tetrisManager->diffTime = tetrisManager->currentDeleteTime - tetrisManager->lastDeleteTime; //시간차 계산
 
 	//삭제 라인의 줄 수 저장
 	_TetrisManager_ComboCount(tetrisManager, count);
@@ -611,13 +619,16 @@ static void _TetrisManager_MakeObstacleOneLine(TetrisManager* tetrisManager){
 	TetrisManager_PrintBoard(tetrisManager);
 }
 
-//현재 삭제된 라인 수를 콤보로 누적 저장하며 1줄 삭제시 콤보 초기화
+//현재 삭제된 라인 수와 유효 시간을 계산하여 콤보 계산
 static void _TetrisManager_ComboCount(TetrisManager* tetrisManager, int count){
 
-	if (count == 1) {
-		
-		tetrisManager->isCombo = False;
-		tetrisManager->currentCombo = 0;
+	if (count == 1) {// 삭제 라인 줄 수가 1일 때
+		if (tetrisManager->diffTime <= VALID_COMBO_TIME) {//유효 시간 내에 삭제하면 콤보 인정
+			tetrisManager->isCombo = True;
+		} else {
+			tetrisManager->isCombo = False;
+			tetrisManager->currentCombo = 0; //그렇지 않은 경우 현재 콤보 초기화
+		}
 	} else {
 
 		tetrisManager->isCombo = True;
@@ -631,7 +642,7 @@ static void _TetrisManager_ComboCount(TetrisManager* tetrisManager, int count){
 		tetrisManager->score += tetrisManager->currentDeleteLineCount * 100; // 콤보로 삭제된 라인 수 * 100
 	}
 
-	if (tetrisManager->currentCombo > tetrisManager->maxCombo) {
+	if (tetrisManager->currentCombo > tetrisManager->maxCombo) {// 최대 콤보 수 계산
 			tetrisManager->maxCombo = tetrisManager->currentCombo;
 	}
 }

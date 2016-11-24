@@ -22,6 +22,9 @@ typedef struct _tetrisManager{
 	HANDLE totalTimeThread;
 	long totalTime;
 	int isTotalTimeAvailable; // if totalTimeThread is alive, this variable is true
+	int currentDeletedLineCount; //현재 지운 라인의 수
+	int maxCombo; //최대 콤보 수
+	int isCombo; //콤보의 여부
 }TetrisManager;
 
 void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel);

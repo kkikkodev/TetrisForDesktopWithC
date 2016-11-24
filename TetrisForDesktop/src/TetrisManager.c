@@ -19,7 +19,7 @@
 #define LINES_TO_DELETE_HIGHTING_MILLISECOND 100
 
 #define BOARD_TYPES_TO_PRINT_ROW_SIZE 12
-#define BOARD_TYPES_TO_PRINT_COL_SIZE 3
+#define BOARD_TYPES_TO_PRINT_COL_SIZE 4
 
 static const char boardTypesToPrint[BOARD_TYPES_TO_PRINT_ROW_SIZE][BOARD_TYPES_TO_PRINT_COL_SIZE] = {
 	("  "), ("■"), ("▩"), ("□"), ("┃"), ("┃"), ("━"), ("━"), ("┏"), ("┓"), ("┗"), ("┛")
@@ -41,6 +41,7 @@ static void _TetrisManager_ChangeBoardByStatus(TetrisManager* tetrisManager, int
 static DWORD WINAPI _TetrisManager_OnTotalTimeThreadStarted(void *tetrisManager);
 static void _TetrisManager_PrintTotalTime(TetrisManager tetrisManager);
 static void _TetrisManager_MakeObstacleOneLine(TetrisManager* tetrisManager);
+static void _TetrisManager_ComboCount(TetrisManager* tetrisManager, int count);
 
 void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel){
 	Block block;
@@ -56,6 +57,9 @@ void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel){
 	tetrisManager->totalTimeThread = NULL;
 	tetrisManager->totalTime = 0;
 	tetrisManager->isTotalTimeAvailable = False;
+	tetrisManager->currentDeletedLineCount = 0; //콤보 변수 초기화
+	tetrisManager->maxCombo = 0;
+	tetrisManager->isCombo = True;
 }
 
 void TetrisManager_ProcessDirection(TetrisManager* tetrisManager, int direction){
@@ -396,6 +400,9 @@ static void _TetrisManager_DeleteLines(TetrisManager* tetrisManager, int* indexe
 			_TetrisManager_UpSpeedLevel(tetrisManager);
 		}
 	}
+
+	//삭제 라인의 줄 수 저장
+	_TetrisManager_ComboCount(tetrisManager, count);
 }
 
 static void _TetrisManager_HighlightLinesToDelete(TetrisManager* tetrisManager, int* indexes, int count){
@@ -444,6 +451,7 @@ static int _TetrisManager_CheckValidPosition(TetrisManager* tetrisManager, int b
 	int i;
 	for (i = 0; i < POSITIONS_SIZE; i++){
 		int x = Block_GetPositions(temp)[i].x;
+		int y = Block_GetPositions(temp)[i].y;
 
 		//but now, x == 0 is empty
 		//originally, x == 0 is top wall
@@ -451,7 +459,7 @@ static int _TetrisManager_CheckValidPosition(TetrisManager* tetrisManager, int b
 		if (blockType == MOVING_BLOCK && x == 0){
 			return TOP_WALL;
 		}
-		int y = Block_GetPositions(temp)[i].y;
+		
 		if (!(tetrisManager->board[x][y] == EMPTY || tetrisManager->board[x][y] == MOVING_BLOCK || tetrisManager->board[x][y] == SHADOW_BLOCK)){
 			return tetrisManager->board[x][y];
 		}
@@ -567,3 +575,15 @@ static void _TetrisManager_MakeObstacleOneLine(TetrisManager* tetrisManager){
 	TetrisManager_PrintBoard(tetrisManager);
 }
 
+//1줄 이상의 라인 삭제를 maxCombo에 누적 저장
+static void _TetrisManager_ComboCount(TetrisManager* tetrisManager, int count) {
+
+	if (tetrisManager->isCombo && count > 1) {
+
+		tetrisManager->currentDeletedLineCount = count;
+
+		tetrisManager->maxCombo += tetrisManager->currentDeletedLineCount;
+		CursorUtil_GotoXY(32, 3);
+		printf("[%d]", tetrisManager->maxCombo);
+	}
+}

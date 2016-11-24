@@ -23,8 +23,9 @@ enum KeyCode{//사용자로 부터 입력받은 키보드 값을 정수값으로
 	DOWN_KEY_CODE = 80,//화살표 아래
 	SPACE_BAR_KEY_CODE = 32,//스페이스바 키
 	ESC_KEY_CODE = 27,//ESC키 
-	L_KEY_CODE = 108, //hold 키
-	ENTER_KEY_CODE = 13//Enter 키
+	L_KEY_CODE = 108, 
+	ENTER_KEY_CODE = 13,//Enter 키
+	Z_KEY_CODE = 122 //Hold
 };
 
 enum FontColor{ //Fontcolor

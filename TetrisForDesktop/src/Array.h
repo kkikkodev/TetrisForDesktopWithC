@@ -2,7 +2,7 @@
 #define	_ARRAY_H
 
 #include <stddef.h>												
-
+extern int line;
 typedef struct _array{
 	void* front;
 	int capacity;

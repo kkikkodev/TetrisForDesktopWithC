@@ -9,55 +9,55 @@
 #define BLOCK_EXAMPLES_SIZE 7
 
 const static Point blockExamples[BLOCK_EXAMPLES_SIZE][POSITIONS_SIZE][POSITIONS_SIZE] = {
-	//§±§±§±§±
+	//„Åë„Åë„Åë„Åë
 	{
 		{ { 0, 5 }, { 0, 6 }, { 0, 7 }, { 0, 8 } },
 		{ { -1, 6 }, { 0, 6 }, { 1, 6 }, { 2, 6 } },
 		{ { 0, 5 }, { 0, 6 }, { 0, 7 }, { 0, 8 } },
 		{ { -1, 6 }, { 0, 6 }, { 1, 6 }, { 2, 6 } }
 	},
-	//    §±
-	//§±§±§±
+	//    „Åë
+	//„Åë„Åë„Åë
 	{
 		{ { 0, 8 }, { 1, 6 }, { 1, 7 }, { 1, 8 } },
 		{ { -1, 7 }, { 0, 7 }, { 1, 7 }, { 1, 8 } },
 		{ { 0, 6 }, { 0, 7 }, { 0, 8 }, { 1, 6 } },
 		{ { -1, 6 }, { -1, 7 }, { 0, 7 }, { 1, 7 } }
 	},
-	//  §±§±
-	//§±§±
+	//  „Åë„Åë
+	//„Åë„Åë
 	{
 		{ { 0, 7 }, { 0, 8 }, { 1, 6 }, { 1, 7 } },
 		{ { -1, 6 }, { 0, 6 }, { 0, 7 }, { 1, 7 } },
 		{ { 0, 7 }, { 0, 8 }, { 1, 6 }, { 1, 7 } },
 		{ { -1, 6 }, { 0, 6 }, { 0, 7 }, { 1, 7 } }
 	},
-	//§±§±
-	//  §±§±
+	//„Åë„Åë
+	//  „Åë„Åë
 	{
 		{ { 0, 6 }, { 0, 7 }, { 1, 7 }, { 1, 8 } },
 		{ { -1, 8 }, { 0, 8 }, { 0, 7 }, { 1, 7 } },
 		{ { 0, 6 }, { 0, 7 }, { 1, 7 }, { 1, 8 } },
 		{ { -1, 8 }, { 0, 8 }, { 0, 7 }, { 1, 7 } }
 	},
-	//  §±
-	//§±§±§±
+	//  „Åë
+	//„Åë„Åë„Åë
 	{
 		{ { 0, 7 }, { 1, 6 }, { 1, 7 }, { 1, 8 } },
 		{ { -1, 7 }, { 0, 7 }, { 0, 8 }, { 1, 7 } },
 		{ { 0, 6 }, { 0, 7 }, { 0, 8 }, { 1, 7 } },
 		{ { -1, 7 }, { 0, 6 }, { 0, 7 }, { 1, 7 } }
 	},
-	//§±
-	//§±§±§±
+	//„Åë
+	//„Åë„Åë„Åë
 	{
 		{ { 0, 6 }, { 1, 6 }, { 1, 7 }, { 1, 8 } },
 		{ { -1, 8 }, { -1, 7 }, { 0, 7 }, { 1, 7 } },
 		{ { 0, 6 }, { 0, 7 }, { 0, 8 }, { 1, 8 } },
 		{ { -1, 7 }, { 0, 7 }, { 1, 7 }, { 1, 6 } }
 	},
-	//§±§±
-	//§±§±
+	//„Åë„Åë
+	//„Åë„Åë
 	{
 		{ { 0, 6 }, { 0, 7 }, { 1, 6 }, { 1, 7 } },
 		{ { 0, 6 }, { 0, 7 }, { 1, 6 }, { 1, 7 } },
@@ -114,9 +114,15 @@ void Block_Destroy(Block block){
 Block Block_Move(Block block, int direction){
 	switch (direction){
 	case LEFT:
-		return _Block_MoveToLeft(block);
+		if(line==0 || line%2==0)
+			return _Block_MoveToLeft(block);
+		else
+			return _Block_MoveToRight(block);
 	case RIGHT:
-		return _Block_MoveToRight(block);
+		if(line==0 || line%2==0)
+			return _Block_MoveToRight(block);
+		else
+			return _Block_MoveToLeft(block);
 	case DOWN:
 		return _Block_MoveToDown(block);
 	case UP:
@@ -152,22 +158,22 @@ void Block_PrintNext(Block block, int index, int x, int y){
 	int next;
 	ScreenUtil_ClearRectangle(x + 2, y + 1, 12, 2); // use temp size (magic number)
 	CursorUtil_GotoXY(x, y++);
-	printf("¶Æ¶¨ Next %d ¶¨¶Ø", index + 1);
+	printf("ŒûŒú Next %d ŒúŒü", index + 1);
 	CursorUtil_GotoXY(x, y++);
 	Queue_At(&block.next, &next, index, sizeof(int));
 	_Block_PrintDefaultBlock(next, x, &y);
 	CursorUtil_GotoXY(x, y++);
-	printf("¶±¶¨¶¨¶¨¶¨¶¨¶¨¶∞");
+	printf("Œ°ŒúŒúŒúŒúŒúŒúŒ†");
 }
 
 void Block_PrintHold(Block block, int x, int y){
 	ScreenUtil_ClearRectangle(x + 2, y + 1, 12, 2); // use temp size (magic number)
 	CursorUtil_GotoXY(x, y++);
-	printf("¶Æ¶¨  Hold  ¶¨¶Ø");
+	printf("ŒûŒú  Hold  ŒúŒü");
 	CursorUtil_GotoXY(x, y++);
 	_Block_PrintDefaultBlock(block.hold, x, &y);
 	CursorUtil_GotoXY(x, y++);
-	printf("¶±¶¨¶¨¶¨¶¨¶¨¶¨¶∞");
+	printf("Œ°ŒúŒúŒúŒúŒúŒúŒ†");
 }
 
 static Block _Block_MoveToDown(Block block){
@@ -211,44 +217,44 @@ static Block _Block_RotateRight(Block block){
 static void _Block_PrintDefaultBlock(int blockNumber, int x, int* y){
 	switch (blockNumber){
 	case -1:
-		printf("¶≠            ¶≠");
+		printf("Œù            Œù");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("¶≠            ¶≠");
+		printf("Œù            Œù");
 		break;
 	case 0:
-		printf("¶≠  °·°·°·°·  ¶≠");
+		printf("Œù  ÔºùÔºùÔºùÔºù  Œù");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("¶≠            ¶≠");
+		printf("Œù            Œù");
 		break;
 	case 1:
-		printf("¶≠       °·   ¶≠");
+		printf("Œù       Ôºù   Œù");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("¶≠   °·°·°·   ¶≠");
+		printf("Œù   ÔºùÔºùÔºù   Œù");
 		break;
 	case 2:
-		printf("¶≠     °·°·   ¶≠");
+		printf("Œù     ÔºùÔºù   Œù");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("¶≠   °·°·     ¶≠");
+		printf("Œù   ÔºùÔºù     Œù");
 		break;
 	case 3:
-		printf("¶≠   °·°·     ¶≠");
+		printf("Œù   ÔºùÔºù     Œù");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("¶≠     °·°·   ¶≠");
+		printf("Œù     ÔºùÔºù   Œù");
 		break;
 	case 4:
-		printf("¶≠     °·     ¶≠");
+		printf("Œù     Ôºù     Œù");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("¶≠   °·°·°·   ¶≠");
+		printf("Œù   ÔºùÔºùÔºù   Œù");
 		break;
 	case 5:
-		printf("¶≠   °·       ¶≠");
+		printf("Œù   Ôºù       Œù");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("¶≠   °·°·°·   ¶≠");
+		printf("Œù   ÔºùÔºùÔºù   Œù");
 		break;
 	case 6:
-		printf("¶≠    °·°·    ¶≠");
+		printf("Œù    ÔºùÔºù    Œù");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("¶≠    °·°·    ¶≠");
+		printf("Œù    ÔºùÔºù    Œù");
 		break;
 	}
 }

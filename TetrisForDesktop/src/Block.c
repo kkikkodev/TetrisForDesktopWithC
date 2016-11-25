@@ -1,6 +1,7 @@
 #include <time.h>
 #include <windows.h>
 #include <stdio.h>
+#include <stdlib.h> //랜덤함수 사용하기위해 추가
 #include "Block.h"
 #include "Util.h"
 #include "Constant.h"
@@ -152,6 +153,26 @@ void Block_ChangeCurrentForHold(Block* block){
 	else{
 		*block = Block_Make(False, *block);
 	}
+}
+
+void Block_ChangeCurrentItem(Block* block){ //현재블록에서 아이템블록으로 바꿔주기 
+	int i; 
+	int j; 
+	int n; 
+	srand((unsigned int)time(NULL)); 
+	n = (rand()%2)*6; // 네모와 작대기 블록이 아이템으로 랜덤 등장  
+	
+	block->current = n; //현재블록을 아이템블록의 번호로 설정  
+	
+	for (i = 0; i < POSITIONS_SIZE; i++)
+	{
+		for (j = 0; j < POSITIONS_SIZE; j++)
+		{ 		
+			block->positions[i][j] = blockExamples[block->current][i][j];
+		} 
+	}  
+	
+	block->direction = UP;
 }
 
 void Block_PrintNext(Block block, int index, int x, int y){

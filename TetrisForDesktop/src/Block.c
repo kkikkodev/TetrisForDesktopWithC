@@ -1,6 +1,7 @@
 #include <time.h>
 #include <windows.h>
 #include <stdio.h>
+#include <stdlib.h> //ëœë¤í•¨ìˆ˜ ì‚¬ìš©í•˜ê¸°ìœ„í•´ ì¶”ê°€
 #include "Block.h"
 #include "Util.h"
 #include "Constant.h"
@@ -9,55 +10,55 @@
 #define BLOCK_EXAMPLES_SIZE 7
 
 const static Point blockExamples[BLOCK_EXAMPLES_SIZE][POSITIONS_SIZE][POSITIONS_SIZE] = {
-	//¤±¤±¤±¤±
+	//ã‘ã‘ã‘ã‘
 	{
 		{ { 0, 5 }, { 0, 6 }, { 0, 7 }, { 0, 8 } },
 		{ { -1, 6 }, { 0, 6 }, { 1, 6 }, { 2, 6 } },
 		{ { 0, 5 }, { 0, 6 }, { 0, 7 }, { 0, 8 } },
 		{ { -1, 6 }, { 0, 6 }, { 1, 6 }, { 2, 6 } }
 	},
-	//    ¤±
-	//¤±¤±¤±
+	//    ã‘
+	//ã‘ã‘ã‘
 	{
 		{ { 0, 8 }, { 1, 6 }, { 1, 7 }, { 1, 8 } },
 		{ { -1, 7 }, { 0, 7 }, { 1, 7 }, { 1, 8 } },
 		{ { 0, 6 }, { 0, 7 }, { 0, 8 }, { 1, 6 } },
 		{ { -1, 6 }, { -1, 7 }, { 0, 7 }, { 1, 7 } }
 	},
-	//  ¤±¤±
-	//¤±¤±
+	//  ã‘ã‘
+	//ã‘ã‘
 	{
 		{ { 0, 7 }, { 0, 8 }, { 1, 6 }, { 1, 7 } },
 		{ { -1, 6 }, { 0, 6 }, { 0, 7 }, { 1, 7 } },
 		{ { 0, 7 }, { 0, 8 }, { 1, 6 }, { 1, 7 } },
 		{ { -1, 6 }, { 0, 6 }, { 0, 7 }, { 1, 7 } }
 	},
-	//¤±¤±
-	//  ¤±¤±
+	//ã‘ã‘
+	//  ã‘ã‘
 	{
 		{ { 0, 6 }, { 0, 7 }, { 1, 7 }, { 1, 8 } },
 		{ { -1, 8 }, { 0, 8 }, { 0, 7 }, { 1, 7 } },
 		{ { 0, 6 }, { 0, 7 }, { 1, 7 }, { 1, 8 } },
 		{ { -1, 8 }, { 0, 8 }, { 0, 7 }, { 1, 7 } }
 	},
-	//  ¤±
-	//¤±¤±¤±
+	//  ã‘
+	//ã‘ã‘ã‘
 	{
 		{ { 0, 7 }, { 1, 6 }, { 1, 7 }, { 1, 8 } },
 		{ { -1, 7 }, { 0, 7 }, { 0, 8 }, { 1, 7 } },
 		{ { 0, 6 }, { 0, 7 }, { 0, 8 }, { 1, 7 } },
 		{ { -1, 7 }, { 0, 6 }, { 0, 7 }, { 1, 7 } }
 	},
-	//¤±
-	//¤±¤±¤±
+	//ã‘
+	//ã‘ã‘ã‘
 	{
 		{ { 0, 6 }, { 1, 6 }, { 1, 7 }, { 1, 8 } },
 		{ { -1, 8 }, { -1, 7 }, { 0, 7 }, { 1, 7 } },
 		{ { 0, 6 }, { 0, 7 }, { 0, 8 }, { 1, 8 } },
 		{ { -1, 7 }, { 0, 7 }, { 1, 7 }, { 1, 6 } }
 	},
-	//¤±¤±
-	//¤±¤±
+	//ã‘ã‘
+	//ã‘ã‘
 	{
 		{ { 0, 6 }, { 0, 7 }, { 1, 6 }, { 1, 7 } },
 		{ { 0, 6 }, { 0, 7 }, { 1, 6 }, { 1, 7 } },
@@ -114,9 +115,15 @@ void Block_Destroy(Block block){
 Block Block_Move(Block block, int direction){
 	switch (direction){
 	case LEFT:
-		return _Block_MoveToLeft(block);
+		if(line==0 || line%2==0)
+			return _Block_MoveToLeft(block);
+		else
+			return _Block_MoveToRight(block);
 	case RIGHT:
-		return _Block_MoveToRight(block);
+		if(line==0 || line%2==0)
+			return _Block_MoveToRight(block);
+		else
+			return _Block_MoveToLeft(block);
 	case DOWN:
 		return _Block_MoveToDown(block);
 	case UP:
@@ -148,26 +155,46 @@ void Block_ChangeCurrentForHold(Block* block){
 	}
 }
 
+void Block_ChangeCurrentItem(Block* block){ //í˜„ì¬ë¸”ë¡ì—ì„œ ì•„ì´í…œë¸”ë¡ìœ¼ë¡œ ë°”ê¿”ì£¼ê¸°Â 
+	int i;Â 
+	int j;Â 
+	int n;Â 
+	srand((unsigned int)time(NULL));Â 
+	n = (rand()%2)*6; // ë„¤ëª¨ì™€ ì‘ëŒ€ê¸° ë¸”ë¡ì´ ì•„ì´í…œìœ¼ë¡œ ëœë¤ ë“±ì¥Â Â 
+	
+	block->current = n; //í˜„ì¬ë¸”ë¡ì„ ì•„ì´í…œë¸”ë¡ì˜ ë²ˆí˜¸ë¡œ ì„¤ì •Â Â 
+	
+	for (i = 0; i < POSITIONS_SIZE; i++)
+	{
+		for (j = 0; j < POSITIONS_SIZE; j++)
+		{Â 		
+			block->positions[i][j] = blockExamples[block->current][i][j];
+		}Â 
+	}Â Â 
+	
+	block->direction = UP;
+}
+
 void Block_PrintNext(Block block, int index, int x, int y){
 	int next;
 	ScreenUtil_ClearRectangle(x + 2, y + 1, 12, 2); // use temp size (magic number)
 	CursorUtil_GotoXY(x, y++);
-	printf("¦®¦¬ Next %d ¦¬¦¯", index + 1);
+	printf("ÎÎœ Next %d ÎœÎŸ", index + 1);
 	CursorUtil_GotoXY(x, y++);
 	Queue_At(&block.next, &next, index, sizeof(int));
 	_Block_PrintDefaultBlock(next, x, &y);
 	CursorUtil_GotoXY(x, y++);
-	printf("¦±¦¬¦¬¦¬¦¬¦¬¦¬¦°");
+	printf("Î¡ÎœÎœÎœÎœÎœÎœÎ ");
 }
 
 void Block_PrintHold(Block block, int x, int y){
 	ScreenUtil_ClearRectangle(x + 2, y + 1, 12, 2); // use temp size (magic number)
 	CursorUtil_GotoXY(x, y++);
-	printf("¦®¦¬  Hold  ¦¬¦¯");
+	printf("ÎÎœ  Hold  ÎœÎŸ");
 	CursorUtil_GotoXY(x, y++);
 	_Block_PrintDefaultBlock(block.hold, x, &y);
 	CursorUtil_GotoXY(x, y++);
-	printf("¦±¦¬¦¬¦¬¦¬¦¬¦¬¦°");
+	printf("Î¡ÎœÎœÎœÎœÎœÎœÎ ");
 }
 
 static Block _Block_MoveToDown(Block block){
@@ -211,44 +238,44 @@ static Block _Block_RotateRight(Block block){
 static void _Block_PrintDefaultBlock(int blockNumber, int x, int* y){
 	switch (blockNumber){
 	case -1:
-		printf("¦­            ¦­");
+		printf("Î            Î");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("¦­            ¦­");
+		printf("Î            Î");
 		break;
 	case 0:
-		printf("¦­  ¡á¡á¡á¡á  ¦­");
+		printf("Î  ï¼ï¼ï¼ï¼  Î");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("¦­            ¦­");
+		printf("Î            Î");
 		break;
 	case 1:
-		printf("¦­       ¡á   ¦­");
+		printf("Î       ï¼   Î");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("¦­   ¡á¡á¡á   ¦­");
+		printf("Î   ï¼ï¼ï¼   Î");
 		break;
 	case 2:
-		printf("¦­     ¡á¡á   ¦­");
+		printf("Î     ï¼ï¼   Î");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("¦­   ¡á¡á     ¦­");
+		printf("Î   ï¼ï¼     Î");
 		break;
 	case 3:
-		printf("¦­   ¡á¡á     ¦­");
+		printf("Î   ï¼ï¼     Î");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("¦­     ¡á¡á   ¦­");
+		printf("Î     ï¼ï¼   Î");
 		break;
 	case 4:
-		printf("¦­     ¡á     ¦­");
+		printf("Î     ï¼     Î");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("¦­   ¡á¡á¡á   ¦­");
+		printf("Î   ï¼ï¼ï¼   Î");
 		break;
 	case 5:
-		printf("¦­   ¡á       ¦­");
+		printf("Î   ï¼       Î");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("¦­   ¡á¡á¡á   ¦­");
+		printf("Î   ï¼ï¼ï¼   Î");
 		break;
 	case 6:
-		printf("¦­    ¡á¡á    ¦­");
+		printf("Î    ï¼ï¼    Î");
 		CursorUtil_GotoXY(x, (*y)++);
-		printf("¦­    ¡á¡á    ¦­");
+		printf("Î    ï¼ï¼    Î");
 		break;
 	}
 }

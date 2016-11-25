@@ -69,9 +69,15 @@ int main(int argc, char* argv[]){
 								tickCount = GetTickCount();
 								break;
 							}
-							if (key == L_KEY_CODE){
+							//È¦µå Å° º¯°æ L->Z
+							if (key == Z_KEY_CODE){
 								TetrisView_MakeHold(&tetrisView);
 							}
+							//level 3,6,9 item x key
+							if ( (key == X_KEY_CODE) ){   
+								TetrisView_MakeItem(&tetrisView);     
+							}
+							
 						}
 					}
 				}

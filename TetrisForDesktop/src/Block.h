@@ -22,5 +22,6 @@ Point* Block_GetPositions(Block block);
 void Block_ChangeCurrentForHold(Block* block);
 void Block_PrintNext(Block block, int index, int x, int y);
 void Block_PrintHold(Block block, int x, int y);
+void Block_ChangeCurrentItem(Block* block); // 아이템 블록 함수
 
 #endif

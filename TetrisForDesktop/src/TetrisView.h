@@ -27,5 +27,6 @@ void TetrisView_ProcessEndMenu(TetrisView* tetrisView);
 //make temporarily for calling from main function
 DWORD TetrisView_GetDownMilliSecond(TetrisView* tetrisView);
 void TetrisView_MakeHold(TetrisView* tetrisView);
+void TetrisView_MakeItem(TetrisView* tetrisView); //TetrisManager_MakeItem함수호출하는함
 
 #endif

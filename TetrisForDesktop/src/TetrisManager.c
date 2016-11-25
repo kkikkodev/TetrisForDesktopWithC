@@ -6,12 +6,13 @@
 #include "TetrisManager.h"
 #include "Util.h"
 #include "Constant.h"
+#include "Time.h"
 
 #define MAX_MAKE_OBSTACLE_ONE_LINE_COUNT 2
 #define MILLI_SECONDS_PER_SECOND 1000
 #define INITIAL_SPEED 300
 #define SPEED_LEVEL_OFFSET 40
-#define LEVELP_UP_CONDITION 3
+#define LEVELP_UP_CONDITION 10 
 #define STATUS_POSITION_X_TO_PRINT 38
 #define STATUS_POSITION_Y_TO_PRINT 1
 
@@ -19,10 +20,12 @@
 #define LINES_TO_DELETE_HIGHTING_MILLISECOND 100
 
 #define BOARD_TYPES_TO_PRINT_ROW_SIZE 12
-#define BOARD_TYPES_TO_PRINT_COL_SIZE 3
+#define BOARD_TYPES_TO_PRINT_COL_SIZE 4
+
+#define VALID_COMBO_TIME 5 //ì½¤ë³´ ìœ íš¨ ì‹œê°„
 
 static const char boardTypesToPrint[BOARD_TYPES_TO_PRINT_ROW_SIZE][BOARD_TYPES_TO_PRINT_COL_SIZE] = {
-	("  "), ("¡á"), ("¢Ì"), ("¡à"), ("¦­"), ("¦­"), ("¦¬"), ("¦¬"), ("¦®"), ("¦¯"), ("¦±"), ("¦°")
+	("  "), ("â– "), ("â–©"), ("â–¡"), ("â”ƒ"), ("â”ƒ"), ("â”"), ("â”"), ("â”"), ("â”“"), ("â”—"), ("â”›")
 };
 
 static void _TetrisManager_PrintStatus(TetrisManager* tetrisManager, int x, int y);
@@ -41,6 +44,8 @@ static void _TetrisManager_ChangeBoardByStatus(TetrisManager* tetrisManager, int
 static DWORD WINAPI _TetrisManager_OnTotalTimeThreadStarted(void *tetrisManager);
 static void _TetrisManager_PrintTotalTime(TetrisManager tetrisManager);
 static void _TetrisManager_MakeObstacleOneLine(TetrisManager* tetrisManager);
+static void _TetrisManager_ComboCount(TetrisManager* tetrisManager, int count);
+static void _TetrisManager_PrintCombo(TetrisManager* tetrisManager, int x, int y);
 
 void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel){
 	Block block;
@@ -56,6 +61,21 @@ void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel){
 	tetrisManager->totalTimeThread = NULL;
 	tetrisManager->totalTime = 0;
 	tetrisManager->isTotalTimeAvailable = False;
+
+	//ì½¤ë³´ ë³€ìˆ˜ ì´ˆê¸°í™”
+	tetrisManager->currentDeleteLineCount = 0; 
+	tetrisManager->maxCombo = 0;
+	tetrisManager->isCombo = True;
+	tetrisManager->currentCombo = 0;
+
+	//ë¼ì¸ ì‚­ì œ ì‹œê°„ ì´ˆê¸°í™”
+	tetrisManager->currentDeleteTime = 0;
+	tetrisManager->lastDeleteTime = 0;
+	tetrisManager->diffTime = 0;
+	
+	//Item check ì´ˆê¸°í™”
+	tetrisManager->item_o_flag =0; //Item ì‚¬ìš© ê°€ëŠ¥ ì²´í¬Â 
+	tetrisManager->item_cnt =0; //Item ì‚¬ìš© ê°€ëŠ¥ ì—¬ë¶€ ì²´í¬
 }
 
 void TetrisManager_ProcessDirection(TetrisManager* tetrisManager, int direction){
@@ -104,6 +124,12 @@ void TetrisManager_ProcessDeletingLines(TetrisManager* tetrisManager){
 		_TetrisManager_ChangeBoardByStatus(tetrisManager, MOVING_BLOCK, MOVING_BLOCK);
 		TetrisManager_PrintBoard(tetrisManager);
 		_TetrisManager_PrintStatus(tetrisManager, x, y);
+
+		//ì½¤ë³´ ì •ë³´ ì¶œë ¥ ìœ„ì¹˜
+		x -= 8;
+		y += 4;
+		_TetrisManager_PrintCombo(tetrisManager, x, y);
+		line++;
 	}
 }
 
@@ -192,8 +218,10 @@ void TetrisManager_PrintDetailInfomation(TetrisManager* tetrisManager){
 	int x = STATUS_POSITION_X_TO_PRINT;
 	int y = STATUS_POSITION_Y_TO_PRINT;
 	_TetrisManager_PrintStatus(tetrisManager, x, y);
-	x += 6;
+	x -= 8;
 	y += 4;
+	_TetrisManager_PrintCombo(tetrisManager, x, y);	// Ã„ÃÂºÂ¸ ÃƒÃ¢Â·Ã‚
+	x += 14;
 	_TetrisManager_PrintKeys(tetrisManager, x, y);
 	x -= 4;
 	y += 10;
@@ -239,6 +267,26 @@ void TetrisManager_MakeHold(TetrisManager* tetrisManager){
 	}
 }
 
+vvoid TetrisManager_MakeItem(TetrisManager* tetrisManager){Â  //ì•„ì´í…œ ë§Œë“¤ê¸°
+	
+	if((tetrisManager->speedLevel % 3 == 0) && tetrisManager->item_cnt ==0)Â Â  //3,6,9 ë ˆë²¨ì—ì„œ xí‚¤ì…ë ¥ì‹œ flagê°’ ë°”ê¾¸ê¸°
+	{Â 
+		tetrisManager->item_o_flag = 1;Â 
+		tetrisManager->item_cnt++; //í•´ë‹¹ ë ˆë²¨ì—ì„œ í•œ ë²ˆë§Œ ì‚¬ìš© ê°€ëŠ¥ í•˜ë„ë¡ 0ì´ ì•„ë‹Œ ê°’ ì„¤ì •Â 
+	}
+	
+	if( tetrisManager->item_o_flag ==1)
+	{ 						//flag ê°’ì´ 1ì´ ë˜ë©´ ë¸”ë¡ì„ ê°€ì ¸ì˜¤ê¸°Â Â 
+		_TetrisManager_PrintBlock(tetrisManager, MOVING_BLOCK, EMPTY);Â 
+		_TetrisManager_ChangeBoardByStatus(tetrisManager, MOVING_BLOCK, EMPTY);Â 
+		_TetrisManager_PrintBlock(tetrisManager, SHADOW_BLOCK, EMPTY);Â 
+		_TetrisManager_ChangeBoardByStatus(tetrisManager, SHADOW_BLOCK, EMPTY);
+		Block_ChangeCurrentItem(&tetrisManager->block);Â 
+		tetrisManager->item_o_flag = 0;Â 
+		_TetrisManager_PrintBlock(tetrisManager, MOVING_BLOCK, MOVING_BLOCK);Â 
+		_TetrisManager_MakeShadow(tetrisManager);
+	}
+}
 void TetrisManager_StartTotalTime(TetrisManager* tetrisManager){
 	DWORD totalTimeThreadID;
 	tetrisManager->isTotalTimeAvailable = True;
@@ -260,33 +308,52 @@ static void _TetrisManager_PrintStatus(TetrisManager* tetrisManager, int x, int 
 	ScreenUtil_ClearRectangle(x + 13, y + 1, 6, 1); // use temp size (magic number)
 	ScreenUtil_ClearRectangle(x + 26, y + 1, 12, 1); // use temp size (magic number)
 	CursorUtil_GotoXY(x, y++);
-	printf("¦® Lv ¦¯   ¦® Line ¦¯   ¦® TotalScore ¦¯");
+	printf("â” Lv â”“   â” Line â”“   â” TotalScore â”“");
 	CursorUtil_GotoXY(x, y++);
-	printf("¦­%3d ¦­   ¦­%4d  ¦­   ¦­%7d     ¦­", tetrisManager->speedLevel, tetrisManager->deletedLineCount, tetrisManager->score);
+	printf("â”ƒ%3d â”ƒ   â”ƒ%4d  â”ƒ   â”ƒ%7d     â”ƒ", tetrisManager->speedLevel, tetrisManager->deletedLineCount, tetrisManager->score);
 	CursorUtil_GotoXY(x, y++);
-	printf("¦±¦¬¦¬¦°   ¦±¦¬¦¬¦¬¦°   ¦±¦¬¦¬¦¬¦¬¦¬¦¬¦°");
+	printf("â”—â”â”â”›   â”—â”â”â”â”›   â”—â”â”â”â”â”â”â”›");
+}
+
+//ì½¤ë³´ ë°•ìŠ¤ ì¶œë ¥
+static void _TetrisManager_PrintCombo(TetrisManager* tetrisManager, int x, int y){
+	ScreenUtil_ClearRectangle(x + 4, y + 1, 6, 1); // use temp size (magic number)
+	ScreenUtil_ClearRectangle(x + 4, y + 2, 6, 1); // use temp size (magic number)
+	CursorUtil_GotoXY(x, y++);
+	printf("â” MaxCombo â”“");
+	CursorUtil_GotoXY(x, y++);
+	printf("â”ƒ%6d    â”ƒ", tetrisManager->maxCombo);
+	CursorUtil_GotoXY(x, y++);
+	printf("â”—â”â”â”â”â”â”›");
+	CursorUtil_GotoXY(x, y++);
+	printf("â” ComboBox â”“");
+	CursorUtil_GotoXY(x, y++);
+	printf("â”ƒ%6d    â”ƒ", tetrisManager->currentCombo);
+	CursorUtil_GotoXY(x, y++);
+	printf("â”—â”â”â”â”â”â”›");
+	CursorUtil_GotoXY(x, y++);
 }
 
 static void _TetrisManager_PrintKeys(TetrisManager* tetrisManager, int x, int y){
 	ScreenUtil_ClearRectangle(x, y, 26, 9); // use temp size (magic number)
 	CursorUtil_GotoXY(x, y++);
-	printf("¦®¦¬¦¬¦¬¦¬ Keys ¦¬¦¬¦¬¦¬¦¯");
+	printf("â”â”â”â”â” Keys â”â”â”â”â”“");
 	CursorUtil_GotoXY(x, y++);
-	printf("¦­¡ç       ¦­move left  ¦­");
+	printf("â”ƒâ†       â”ƒmove left  â”ƒ");
 	CursorUtil_GotoXY(x, y++);
-	printf("¦­¡æ       ¦­move right ¦­");
+	printf("â”ƒâ†’       â”ƒmove right â”ƒ");
 	CursorUtil_GotoXY(x, y++);
-	printf("¦­¡é       ¦­move down  ¦­");
+	printf("â”ƒâ†“       â”ƒmove down  â”ƒ");
 	CursorUtil_GotoXY(x, y++);
-	printf("¦­¡è       ¦­rotate     ¦­");
+	printf("â”ƒâ†‘       â”ƒrotate     â”ƒ");
 	CursorUtil_GotoXY(x, y++);
-	printf("¦­SpaceBar ¦­direct down¦­");
+	printf("â”ƒSpaceBar â”ƒdirect downâ”ƒ");
 	CursorUtil_GotoXY(x, y++);
-	printf("¦­ESC      ¦­pause      ¦­");
+	printf("â”ƒESC      â”ƒpause      â”ƒ");
 	CursorUtil_GotoXY(x, y++);
-	printf("¦­L (l)    ¦­hold       ¦­");
+	printf("â”ƒZ (z)    â”ƒhold       â”ƒ");
 	CursorUtil_GotoXY(x, y++);
-	printf("¦±¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦°");
+	printf("â”—â”â”â”â”â”â”â”â”â”â”â”â”›");
 }
 
 static void _TetrisManager_PrintBlock(TetrisManager* tetrisManager, int blockType, int status){
@@ -340,6 +407,9 @@ static void _TetrisManager_UpSpeedLevel(TetrisManager* tetrisManager){
 	if (tetrisManager->speedLevel < MAX_SPEED_LEVEL){
 		tetrisManager->speedLevel++;
 	}
+	
+	if(tetrisManager->speedLevel%3==0) 
+		tetrisManager->item_cnt=0; // 3,6,9levelì—ì„œ ì‚¬ìš©í•  ìˆ˜ ìˆë„ë¡ cntê°’ 0ìœ¼ë¡œ ë°”ê¿”ì£¼ê¸°
 }
 
 static void _TetrisManager_SearchLineIndexesToDelete(TetrisManager* tetrisManager, int* indexes, int* count){
@@ -368,6 +438,10 @@ static void _TetrisManager_DeleteLines(TetrisManager* tetrisManager, int* indexe
 	int k = BOARD_ROW_SIZE - 2;
 	int toDelete;
 	char temp[BOARD_ROW_SIZE][BOARD_COL_SIZE] = { EMPTY, };
+
+	//ê°€ì¥ ë§ˆì§€ë§‰ì— ë¼ì¸ ì‚­ì œê°€ ëœ ì‹œê°„ì„ ë§ˆì§€ë§‰ ì‹œê°„ì— ëŒ€ì…
+	tetrisManager->lastDeleteTime = tetrisManager->currentDeleteTime;
+
 	for (i = BOARD_ROW_SIZE - 2; i > 0; i--){
 		toDelete = False;
 		for (j = 0; j < BOARD_COL_SIZE; j++){
@@ -396,6 +470,12 @@ static void _TetrisManager_DeleteLines(TetrisManager* tetrisManager, int* indexe
 			_TetrisManager_UpSpeedLevel(tetrisManager);
 		}
 	}
+
+	tetrisManager->currentDeleteTime = Time_GetTime(); //í˜„ì¬ ì‹œê°„ì„ ê°€ì ¸ì™€ ì €ì¥
+	tetrisManager->diffTime = tetrisManager->currentDeleteTime - tetrisManager->lastDeleteTime; //ì‹œê°„ì°¨ ê³„ì‚°
+
+	//ì‚­ì œ ë¼ì¸ì˜ ì¤„ ìˆ˜ ì €ì¥
+	_TetrisManager_ComboCount(tetrisManager, count);
 }
 
 static void _TetrisManager_HighlightLinesToDelete(TetrisManager* tetrisManager, int* indexes, int count){
@@ -408,7 +488,7 @@ static void _TetrisManager_HighlightLinesToDelete(TetrisManager* tetrisManager, 
 		for (j = 0; j < count; j++){
 			CursorUtil_GotoXY(2, indexes[j]);
 			for (k = 0; k < BOARD_COL_SIZE - 2; k++){
-				printf("¢Ê");
+				printf("â–§");
 			}
 		}
 		FontUtil_ChangeFontColor(DEFAULT_FONT_COLOR);
@@ -444,6 +524,7 @@ static int _TetrisManager_CheckValidPosition(TetrisManager* tetrisManager, int b
 	int i;
 	for (i = 0; i < POSITIONS_SIZE; i++){
 		int x = Block_GetPositions(temp)[i].x;
+		int y = Block_GetPositions(temp)[i].y;
 
 		//but now, x == 0 is empty
 		//originally, x == 0 is top wall
@@ -451,7 +532,7 @@ static int _TetrisManager_CheckValidPosition(TetrisManager* tetrisManager, int b
 		if (blockType == MOVING_BLOCK && x == 0){
 			return TOP_WALL;
 		}
-		int y = Block_GetPositions(temp)[i].y;
+		
 		if (!(tetrisManager->board[x][y] == EMPTY || tetrisManager->board[x][y] == MOVING_BLOCK || tetrisManager->board[x][y] == SHADOW_BLOCK)){
 			return tetrisManager->board[x][y];
 		}
@@ -526,11 +607,11 @@ static void _TetrisManager_PrintTotalTime(TetrisManager tetrisManager){
 	int x = 42;
 	int y = 20;
 	CursorUtil_GotoXY(x, y++);
-	printf("¦®  time  ¦¯");
+	printf("â”  time  â”“");
 	CursorUtil_GotoXY(x, y++);
-	printf("¦­%02d:%02d:%02d¦­", hour, minute, second);
+	printf("â”ƒ%02d:%02d:%02dâ”ƒ", hour, minute, second);
 	CursorUtil_GotoXY(x, y++);
-	printf("¦±¦¬¦¬¦¬¦¬¦°");
+	printf("â”—â”â”â”â”â”›");
 }
 
 static void _TetrisManager_MakeObstacleOneLine(TetrisManager* tetrisManager){
@@ -567,3 +648,30 @@ static void _TetrisManager_MakeObstacleOneLine(TetrisManager* tetrisManager){
 	TetrisManager_PrintBoard(tetrisManager);
 }
 
+//í˜„ì¬ ì‚­ì œëœ ë¼ì¸ ìˆ˜ì™€ ìœ íš¨ ì‹œê°„ì„ ê³„ì‚°í•˜ì—¬ ì½¤ë³´ ê³„ì‚°
+static void _TetrisManager_ComboCount(TetrisManager* tetrisManager, int count){
+
+	if (count == 1) {// ì‚­ì œ ë¼ì¸ ì¤„ ìˆ˜ê°€ 1ì¼ ë•Œ
+		if (tetrisManager->diffTime <= VALID_COMBO_TIME) {//ìœ íš¨ ì‹œê°„ ë‚´ì— ì‚­ì œí•˜ë©´ ì½¤ë³´ ì¸ì •
+			tetrisManager->isCombo = True;
+		} else {
+			tetrisManager->isCombo = False;
+			tetrisManager->currentCombo = 0; //ê·¸ë ‡ì§€ ì•Šì€ ê²½ìš° í˜„ì¬ ì½¤ë³´ ì´ˆê¸°í™”
+		}
+	} else {
+
+		tetrisManager->isCombo = True;
+	}
+
+	if (tetrisManager->isCombo) {
+
+		tetrisManager->currentDeleteLineCount = count;
+
+		tetrisManager->currentCombo += tetrisManager->currentDeleteLineCount;
+		tetrisManager->score += tetrisManager->currentDeleteLineCount * 100; // ì½¤ë³´ë¡œ ì‚­ì œëœ ë¼ì¸ ìˆ˜ * 100
+	}
+
+	if (tetrisManager->currentCombo > tetrisManager->maxCombo) {// ìµœëŒ€ ì½¤ë³´ ìˆ˜ ê³„ì‚°
+			tetrisManager->maxCombo = tetrisManager->currentCombo;
+	}
+}

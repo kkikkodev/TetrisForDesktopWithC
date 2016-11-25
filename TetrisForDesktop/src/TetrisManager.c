@@ -72,6 +72,10 @@ void TetrisManager_Init(TetrisManager* tetrisManager, int speedLevel){
 	tetrisManager->currentDeleteTime = 0;
 	tetrisManager->lastDeleteTime = 0;
 	tetrisManager->diffTime = 0;
+	
+	//Item check 초기화
+	tetrisManager->item_o_flag =0; //Item 사용 가능 체크 
+	tetrisManager->item_cnt =0; //Item 사용 가능 여부 체크
 }
 
 void TetrisManager_ProcessDirection(TetrisManager* tetrisManager, int direction){
@@ -263,6 +267,26 @@ void TetrisManager_MakeHold(TetrisManager* tetrisManager){
 	}
 }
 
+vvoid TetrisManager_MakeItem(TetrisManager* tetrisManager){  //아이템 만들기
+	
+	if((tetrisManager->speedLevel % 3 == 0) && tetrisManager->item_cnt ==0)   //3,6,9 레벨에서 x키입력시 flag값 바꾸기
+	{ 
+		tetrisManager->item_o_flag = 1; 
+		tetrisManager->item_cnt++; //해당 레벨에서 한 번만 사용 가능 하도록 0이 아닌 값 설정 
+	}
+	
+	if( tetrisManager->item_o_flag ==1)
+	{ 						//flag 값이 1이 되면 블록을 가져오기  
+		_TetrisManager_PrintBlock(tetrisManager, MOVING_BLOCK, EMPTY); 
+		_TetrisManager_ChangeBoardByStatus(tetrisManager, MOVING_BLOCK, EMPTY); 
+		_TetrisManager_PrintBlock(tetrisManager, SHADOW_BLOCK, EMPTY); 
+		_TetrisManager_ChangeBoardByStatus(tetrisManager, SHADOW_BLOCK, EMPTY);
+		Block_ChangeCurrentItem(&tetrisManager->block); 
+		tetrisManager->item_o_flag = 0; 
+		_TetrisManager_PrintBlock(tetrisManager, MOVING_BLOCK, MOVING_BLOCK); 
+		_TetrisManager_MakeShadow(tetrisManager);
+	}
+}
 void TetrisManager_StartTotalTime(TetrisManager* tetrisManager){
 	DWORD totalTimeThreadID;
 	tetrisManager->isTotalTimeAvailable = True;
@@ -383,6 +407,9 @@ static void _TetrisManager_UpSpeedLevel(TetrisManager* tetrisManager){
 	if (tetrisManager->speedLevel < MAX_SPEED_LEVEL){
 		tetrisManager->speedLevel++;
 	}
+	
+	if(tetrisManager->speedLevel%3==0) 
+		tetrisManager->item_cnt=0; // 3,6,9level에서 사용할 수 있도록 cnt값 0으로 바꿔주기
 }
 
 static void _TetrisManager_SearchLineIndexesToDelete(TetrisManager* tetrisManager, int* indexes, int* count){

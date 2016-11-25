@@ -23,13 +23,16 @@ typedef struct _tetrisManager{
 	HANDLE totalTimeThread;
 	long totalTime;
 	int isTotalTimeAvailable; // if totalTimeThread is alive, this variable is true
-	int currentDeleteLineCount; //ÇöÀç Áö¿î ¶óÀÎÀÇ ¼ö
-	int maxCombo; //ÃÖ´ë ÄŞº¸ ¼ö
-	int isCombo; //ÄŞº¸ÀÇ ¿©ºÎ
-	int currentCombo; //ÇöÀç ÄŞº¸ ¼ö
-	time_t currentDeleteTime; //ÇöÀç ¶óÀÎ »èÁ¦ ½Ã°£
-	time_t lastDeleteTime; //¸¶Áö¸· ¶óÀÎ »èÁ¦ ½Ã°£
-	time_t diffTime; //¶óÀÎ »èÁ¦ ½Ã°£Â÷
+	int currentDeleteLineCount; //í˜„ì¬ ì§€ìš´ ë¼ì¸ì˜ ìˆ˜
+	int maxCombo; //ìµœëŒ€ ì½¤ë³´ ìˆ˜
+	int isCombo; //ì½¤ë³´ì˜ ì—¬ë¶€
+	int currentCombo; //í˜„ì¬ ì½¤ë³´ ìˆ˜
+	time_t currentDeleteTime; //í˜„ì¬ ë¼ì¸ ì‚­ì œ ì‹œê°„
+	time_t lastDeleteTime; //ë§ˆì§€ë§‰ ë¼ì¸ ì‚­ì œ ì‹œê°„
+	time_t diffTime; //ë¼ì¸ ì‚­ì œ ì‹œê°„ì°¨
+	int item_o_flag; //Item check
+	int item_cnt; //Item check
+	
 
 }TetrisManager;
 
@@ -48,5 +51,6 @@ void TetrisManager_MakeHold(TetrisManager* tetrisManager);
 void TetrisManager_StartTotalTime(TetrisManager* tetrisManager);
 void TetrisManager_PauseTotalTime(TetrisManager* tetrisManager);
 void TetrisManager_StopTotalTime(TetrisManager* tetrisManager);
+void TetrisManager_MakeItem(TetrisManager* tetrisManager); //Level 3,6,9 Item í•¨
 
 #endif

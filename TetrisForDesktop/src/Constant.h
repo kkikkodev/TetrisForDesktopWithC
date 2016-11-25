@@ -26,6 +26,7 @@ enum KeyCode{//사용자로 부터 입력받은 키보드 값을 정수값으로
 	L_KEY_CODE = 108, 
 	ENTER_KEY_CODE = 13,//Enter 키
 	Z_KEY_CODE = 122 //Hold
+	X_KEY_CODE = 120 // 3,6,9 ITEM키
 };
 
 enum FontColor{ //Fontcolor

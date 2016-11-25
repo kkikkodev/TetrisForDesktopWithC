@@ -25,7 +25,7 @@
 #define VALID_COMBO_TIME 5 //ÄÞº¸ À¯È¿ ½Ã°£
 
 static const char boardTypesToPrint[BOARD_TYPES_TO_PRINT_ROW_SIZE][BOARD_TYPES_TO_PRINT_COL_SIZE] = {
-	("  "), ("¡á"), ("¢Ì"), ("¡à"), ("¦­"), ("¦­"), ("¦¬"), ("¦¬"), ("¦®"), ("¦¯"), ("¦±"), ("¦°")
+	("  "), ("Â¡Ã¡"), ("Â¢ÃŒ"), ("Â¡Ã "), ("Â¦Â­"), ("Â¦Â­"), ("Â¦Â¬"), ("Â¦Â¬"), ("Â¦Â®"), ("Â¦Â¯"), ("Â¦Â±"), ("Â¦Â°")
 };
 
 static void _TetrisManager_PrintStatus(TetrisManager* tetrisManager, int x, int y);
@@ -125,6 +125,7 @@ void TetrisManager_ProcessDeletingLines(TetrisManager* tetrisManager){
 		x -= 8;
 		y += 4;
 		_TetrisManager_PrintCombo(tetrisManager, x, y);
+		line++;
 	}
 }
 
@@ -283,11 +284,11 @@ static void _TetrisManager_PrintStatus(TetrisManager* tetrisManager, int x, int 
 	ScreenUtil_ClearRectangle(x + 13, y + 1, 6, 1); // use temp size (magic number)
 	ScreenUtil_ClearRectangle(x + 26, y + 1, 12, 1); // use temp size (magic number)
 	CursorUtil_GotoXY(x, y++);
-	printf("¦® Lv ¦¯   ¦® Line ¦¯   ¦® TotalScore ¦¯");
+	printf("Â¦Â® Lv Â¦Â¯   Â¦Â® Line Â¦Â¯   Â¦Â® TotalScore Â¦Â¯");
 	CursorUtil_GotoXY(x, y++);
-	printf("¦­%3d ¦­   ¦­%4d  ¦­   ¦­%7d     ¦­", tetrisManager->speedLevel, tetrisManager->deletedLineCount, tetrisManager->score);
+	printf("Â¦Â­%3d Â¦Â­   Â¦Â­%4d  Â¦Â­   Â¦Â­%7d     Â¦Â­", tetrisManager->speedLevel, tetrisManager->deletedLineCount, tetrisManager->score);
 	CursorUtil_GotoXY(x, y++);
-	printf("¦±¦¬¦¬¦°   ¦±¦¬¦¬¦¬¦°   ¦±¦¬¦¬¦¬¦¬¦¬¦¬¦°");
+	printf("Â¦Â±Â¦Â¬Â¦Â¬Â¦Â°   Â¦Â±Â¦Â¬Â¦Â¬Â¦Â¬Â¦Â°   Â¦Â±Â¦Â¬Â¦Â¬Â¦Â¬Â¦Â¬Â¦Â¬Â¦Â¬Â¦Â°");
 }
 
 //ÄÞº¸ ¹Ú½º Ãâ·Â
@@ -312,23 +313,23 @@ static void _TetrisManager_PrintCombo(TetrisManager* tetrisManager, int x, int y
 static void _TetrisManager_PrintKeys(TetrisManager* tetrisManager, int x, int y){
 	ScreenUtil_ClearRectangle(x, y, 26, 9); // use temp size (magic number)
 	CursorUtil_GotoXY(x, y++);
-	printf("¦®¦¬¦¬¦¬¦¬ Keys ¦¬¦¬¦¬¦¬¦¯");
+	printf("Â¦Â®Â¦Â¬Â¦Â¬Â¦Â¬Â¦Â¬ Keys Â¦Â¬Â¦Â¬Â¦Â¬Â¦Â¬Â¦Â¯");
 	CursorUtil_GotoXY(x, y++);
-	printf("¦­¡ç       ¦­move left  ¦­");
+	printf("Â¦Â­Â¡Ã§       Â¦Â­move left  Â¦Â­");
 	CursorUtil_GotoXY(x, y++);
-	printf("¦­¡æ       ¦­move right ¦­");
+	printf("Â¦Â­Â¡Ã¦       Â¦Â­move right Â¦Â­");
 	CursorUtil_GotoXY(x, y++);
-	printf("¦­¡é       ¦­move down  ¦­");
+	printf("Â¦Â­Â¡Ã©       Â¦Â­move down  Â¦Â­");
 	CursorUtil_GotoXY(x, y++);
-	printf("¦­¡è       ¦­rotate     ¦­");
+	printf("Â¦Â­Â¡Ã¨       Â¦Â­rotate     Â¦Â­");
 	CursorUtil_GotoXY(x, y++);
-	printf("¦­SpaceBar ¦­direct down¦­");
+	printf("Â¦Â­SpaceBar Â¦Â­direct downÂ¦Â­");
 	CursorUtil_GotoXY(x, y++);
-	printf("¦­ESC      ¦­pause      ¦­");
+	printf("Â¦Â­ESC      Â¦Â­pause      Â¦Â­");
 	CursorUtil_GotoXY(x, y++);
 	printf("¦­Z (z)    ¦­hold       ¦­");
 	CursorUtil_GotoXY(x, y++);
-	printf("¦±¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦¬¦°");
+	printf("Â¦Â±Â¦Â¬Â¦Â¬Â¦Â¬Â¦Â¬Â¦Â¬Â¦Â¬Â¦Â¬Â¦Â¬Â¦Â¬Â¦Â¬Â¦Â¬Â¦Â°");
 }
 
 static void _TetrisManager_PrintBlock(TetrisManager* tetrisManager, int blockType, int status){
@@ -459,7 +460,7 @@ static void _TetrisManager_HighlightLinesToDelete(TetrisManager* tetrisManager, 
 		for (j = 0; j < count; j++){
 			CursorUtil_GotoXY(2, indexes[j]);
 			for (k = 0; k < BOARD_COL_SIZE - 2; k++){
-				printf("¢Ê");
+				printf("Â¢ÃŠ");
 			}
 		}
 		FontUtil_ChangeFontColor(DEFAULT_FONT_COLOR);
@@ -578,11 +579,11 @@ static void _TetrisManager_PrintTotalTime(TetrisManager tetrisManager){
 	int x = 42;
 	int y = 20;
 	CursorUtil_GotoXY(x, y++);
-	printf("¦®  time  ¦¯");
+	printf("Â¦Â®  time  Â¦Â¯");
 	CursorUtil_GotoXY(x, y++);
-	printf("¦­%02d:%02d:%02d¦­", hour, minute, second);
+	printf("Â¦Â­%02d:%02d:%02dÂ¦Â­", hour, minute, second);
 	CursorUtil_GotoXY(x, y++);
-	printf("¦±¦¬¦¬¦¬¦¬¦°");
+	printf("Â¦Â±Â¦Â¬Â¦Â¬Â¦Â¬Â¦Â¬Â¦Â°");
 }
 
 static void _TetrisManager_MakeObstacleOneLine(TetrisManager* tetrisManager){

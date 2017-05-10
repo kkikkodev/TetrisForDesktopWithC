@@ -17,7 +17,14 @@ enum KeyCode{
 	UP_KEY_CODE = 72, LEFT_KEY_CODE = 75,
 	RIGHT_KEY_CODE = 77, DOWN_KEY_CODE = 80,
 	SPACE_BAR_KEY_CODE = 32, ESC_KEY_CODE = 27,
-	L_KEY_CODE = 108, ENTER_KEY_CODE = 13
+	L_KEY_CODE = 108, ENTER_KEY_CODE = 13,
+	ITEM_FIRST_CODE = 122, ITEM_SECOND_CODE = 120,
+	ITEM_THRID_CODE = 99, ITEM_FOURTH_CODE = 118,   //X = 122, Y = 120, C = 99, V = 118 
+
+	/*P_KEY_CODE = 112,		//아이템 : 한 줄 지우기
+	O_KEY_CODE = 111,		//아이템 : 두 줄 지우기
+	I_KEY_CODE = 105,		//아이템 : 전체 지우기*/
+	A_KEY_CODE = 97		//다음블럭과 다다음블럭 바꾸기
 };
 
 enum FontColor{

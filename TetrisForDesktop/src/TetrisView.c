@@ -162,10 +162,12 @@ void TetrisView_ShowSetting(TetrisView* tetrisView){
 	CursorUtil_GotoXY(x, y++);
 	printf("┗━━━━━━━━━┛");
 	x += 4;
-	y -= 2;
+	y -= 3;
 	CursorUtil_GotoXY(x, y++);
 	CursorUtil_Show();
-	scanf("%d", &tetrisView->level);
+	//scanf("%d", &tetrisView->level); // 레벨 입력받는 함수를 따로 만들었기 때문에 삭제
+	tetrisView->level = level_scanf(x, y); // 레벨 입력받는 함수
+
 	CursorUtil_Hide();
 	if (tetrisView->level >= MIN_SPEED_LEVEL && tetrisView->level <= MAX_SPEED_LEVEL){
 
@@ -179,7 +181,7 @@ void TetrisView_ShowSetting(TetrisView* tetrisView){
 	else{
 		tetrisView->level = MIN_SPEED_LEVEL;
 	}
-	while (getchar() != '\n');
+	//while (getchar() != '\n'); // 레벨 입력받는 함수를 따로 만들었기 때문에 삭제
 }
 
 void TetrisView_ProcessMainMenu(TetrisView* tetrisView){
@@ -329,4 +331,74 @@ DWORD TetrisView_GetDownMilliSecond(TetrisView* tetrisView){
 
 void TetrisView_MakeHold(TetrisView* tetrisView){
 	TetrisManager_MakeHold(&tetrisView->tetrisManager);
+}
+
+/*void TetrisView_Item_RemoveOneRow(TetrisView* tetrisView){
+	//아이템1 : 한 줄 제거
+	TetrisManager_Item_RemoveOneRow(&tetrisView->tetrisManager);
+}*/
+
+/*void TetrisView_Item_RemoveTwoRow(TetrisView* tetrisView){
+	//아이템2 : 두 줄 제거
+	TetrisManager_Item_RemoveTwoRow(&tetrisView->tetrisManager);
+}*/
+
+/*void TetrisView_Item_RemoveAllRow(TetrisView* tetrisView){
+	//아이템3 : 전체 줄 제거
+	TetrisManager_Item_RemoveAllRow(&tetrisView->tetrisManager);
+}*/
+
+//다음블럭과 다다음블럭 바꾸기
+void TetrisView_ChangeNextBlock(TetrisView* tetrisView){
+	TetrisManager_ChangeNextBlock(&tetrisView->tetrisManager);
+}
+
+int level_scanf(int x, int y) {
+	int ch[3] = {-1,-1,-1}; // 값을 입력받아 저장할 배열을 생성
+	while(1) {
+		CursorUtil_GotoXY(x, y); // 커서 위치 이동
+		CursorUtil_Show(); // 커서 표시
+		ch[0] = _getch(); // 첫번째 입력을 받는다
+		if (ch[0] == '1') // 첫번째 입력이 1일 경우
+		{
+			printf("%c", ch[0]); // 화면에 입력받은 숫자를 표시 (getch: 문자 입력시 화면 출력 안함)
+			while(1) {
+				CursorUtil_GotoXY(x+1, y); // 커서를 두번째 자리로 이동
+				CursorUtil_Show(); // 커서 표시
+				ch[1] = _getch(); // 두번째 입력을 받는다 
+				if (ch[1] == '0') // 첫번째 입력이 1이고, 두번째 입력이 0일 경우
+				{
+					printf("%c", ch[1]); // 화면에 입력받은 숫자를 표시 (getch: 문자 입력시 화면 출력 안함)
+					while (ch[2] != ENTER_KEY_CODE) // 세번째 입력이 엔터일 때 까지 반복문 수행
+					{
+						CursorUtil_GotoXY(x+2, y); // 커서를 세번째 자리로 이동
+						CursorUtil_Show(); // 커서 표시
+						ch[2] = _getch(); // 세번째 입력을 받는다
+					}
+					return 10; // 10을 반환
+					break;
+				}
+				else if (ch[1] == ENTER_KEY_CODE) // 첫번째 입력이 1이고, 두번째 입력이 엔터일 경우
+				{
+					return 1; // 1을 반환
+					break;
+				}
+			}
+			break;
+		}
+		else if (isdigit(ch[0])) // 첫번째 입력이 1이 아닌 다른 숫자일 경우 (2~9)
+		{	
+			printf("%c", ch[0]); // 화면에 입력받은 숫자를 표시 (getch: 문자 입력시 화면 출력 안함)
+			while (ch[1] != ENTER_KEY_CODE) // 두번째 입력이 엔터일 때 까지 반복문 수행
+			{
+				CursorUtil_GotoXY(x, y); // 커서를 첫번째 자리로 이동
+				CursorUtil_Show(); // 커서 표시
+				ch[1] = _getch(); // 두번째 입력을 받는다
+			}
+			return ch[0]-48; // 첫번째 입력받은 값을 반환
+			break;
+		}
+		else // 첫번째 입력이 숫자가 아닐 경우
+			continue; // 다시 입력받는다
+	}
 }
